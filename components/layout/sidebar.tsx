@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { cn } from '@/lib/utils';
 import {
   BarChart3,
@@ -20,21 +21,34 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useUserRole } from '@/hooks/use-user-role';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Campaigns', href: '/campaigns', icon: Target },
-  { name: 'Content Calendar', href: '/content', icon: Calendar },
-  { name: 'Leads', href: '/leads', icon: MessageSquare },
-  { name: 'Tasks', href: '/tasks', icon: Zap },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Invoices', href: '/invoices', icon: FileText },
+  { name: 'Dashboard', href: '/', icon: Home, roles: ['Admin', 'Marketer', 'Designer'] },
+  { name: 'Clients', href: '/clients', icon: Users, roles: ['Admin', 'Marketer'] },
+  { name: 'Campaigns', href: '/campaigns', icon: Target, roles: ['Admin', 'Marketer'] },
+  { name: 'Content Calendar', href: '/content', icon: Calendar, roles: ['Admin', 'Marketer', 'Designer'] },
+  { name: 'Leads', href: '/leads', icon: MessageSquare, roles: ['Admin', 'Marketer'] },
+  { name: 'Tasks', href: '/tasks', icon: Zap, roles: ['Admin', 'Marketer', 'Designer'] },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3, roles: ['Admin', 'Marketer'] },
+  { name: 'Invoices', href: '/invoices', icon: FileText, roles: ['Admin'] },
 ];
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { signOut } = useClerk();
+  const { user } = useUser();
+  const { role, hasAnyRole } = useUserRole();
+
+  // Filter navigation based on user role
+  const filteredNavigation = navigation.filter(item => 
+    hasAnyRole(item.roles as any)
+  );
+
+  const handleSignOut = () => {
+    signOut();
+  };
 
   return (
     <div
@@ -69,7 +83,7 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
-        {navigation.map((item) => {
+        {filteredNavigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
           
@@ -95,15 +109,17 @@ export function Sidebar() {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center space-x-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100" />
-            <AvatarFallback>SM</AvatarFallback>
+            <AvatarImage src={user?.imageUrl} />
+            <AvatarFallback>
+              {user?.firstName?.[0]}{user?.lastName?.[0]}
+            </AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
-                Sarah Marketing
+                {user?.fullName || 'User'}
               </p>
-              <p className="text-xs text-gray-500">Marketer</p>
+              <p className="text-xs text-gray-500">{role}</p>
             </div>
           )}
         </div>
@@ -113,7 +129,12 @@ export function Sidebar() {
             <Button variant="ghost" size="sm" className="h-8 px-2">
               <Settings className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-8 px-2 text-red-600 hover:text-red-700">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 px-2 text-red-600 hover:text-red-700"
+              onClick={handleSignOut}
+            >
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
