@@ -140,7 +140,12 @@ export default function CampaignsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredCampaigns.map((campaign) => {
-          const progress = calculateProgress(campaign.startDate, campaign.endDate);
+          // Convert string dates to Date objects to ensure .getTime() works
+          const startDate = new Date(campaign.startDate);
+          const endDate = new Date(campaign.endDate);
+          const createdAt = new Date(campaign.createdAt);
+          
+          const progress = calculateProgress(startDate, endDate);
           const isActive = campaign.status === 'Active';
           
           return (
@@ -241,8 +246,8 @@ export default function CampaignsPage() {
                     </div>
                     <Progress value={progress} className="h-2" />
                     <div className="flex justify-between text-xs text-gray-500">
-                      <span>{campaign.startDate.toLocaleDateString()}</span>
-                      <span>{campaign.endDate.toLocaleDateString()}</span>
+                      <span>{startDate.toLocaleDateString()}</span>
+                      <span>{endDate.toLocaleDateString()}</span>
                     </div>
                   </div>
                   
@@ -265,7 +270,7 @@ export default function CampaignsPage() {
                   
                   <div className="flex justify-between items-center pt-2 text-xs text-gray-500">
                     <span>Assigned to {campaign.assignedTo}</span>
-                    <span>Created {campaign.createdAt.toLocaleDateString()}</span>
+                    <span>Created {createdAt.toLocaleDateString()}</span>
                   </div>
                 </div>
               </CardContent>
