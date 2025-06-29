@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { RoleGuard } from '@/components/auth/role-guard';
 import { Invoice } from '@/types';
 
 // Mock invoice data
@@ -85,14 +84,6 @@ const mockInvoices: Invoice[] = [
 ];
 
 export default function InvoicesPage() {
-  return (
-    <RoleGuard allowedRoles={['Admin']}>
-      <InvoicesContent />
-    </RoleGuard>
-  );
-}
-
-function InvoicesContent() {
   const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');

@@ -1,17 +1,11 @@
 'use client';
 
 import { Bell, Search } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUserRole } from '@/hooks/use-user-role';
 
 export function Header() {
-  const { user } = useUser();
-  const { role } = useUserRole();
-
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -35,21 +29,6 @@ export function Header() {
               3
             </Badge>
           </Button>
-          
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.imageUrl} />
-              <AvatarFallback>
-                {user?.firstName?.[0]}{user?.lastName?.[0]}
-              </AvatarFallback>
-            </Avatar>
-            <div className="hidden md:block">
-              <p className="text-sm font-medium text-gray-900">
-                {user?.fullName || 'User'}
-              </p>
-              <p className="text-xs text-gray-500">{role}</p>
-            </div>
-          </div>
         </div>
       </div>
     </header>
