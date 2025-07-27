@@ -21,6 +21,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useAppStore } from "@/lib/store";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -35,7 +67,63 @@ const navigation = [
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const pathname = usePathname();
+  const users = useAppStore((s) => s.users);
+  const tasks = useAppStore((s) => s.tasks);
+  const campaigns = useAppStore((s) => s.campaigns);
+  const updateUser = useAppStore((s) => s.updateUser);
+  // Use first user as current user (replace with real auth logic as needed)
+  const user = users[0];
+  const completedTasks = tasks.filter(
+    (t) => t.assignedTo === user.name && t.status === "Done"
+  ).length;
+  const totalTasks = tasks.filter((t) => t.assignedTo === user.name).length;
+  const assignedCampaigns = campaigns.filter((c) => c.assignedTo === user.name).length;
+
+  const profileSchema = z.object({
+    name: z.string().min(2, "Name required"),
+    email: z.string().email("Invalid email"),
+    role: z.enum(["Admin", "Marketer", "Designer"]),
+    isAdmin: z.boolean(),
+    avatar: z.string().url("Must be a valid URL"),
+  });
+  type ProfileFormData = z.infer<typeof profileSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: user
+      ? {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isAdmin: user.role === "Admin",
+          avatar: user.avatar || "",
+        }
+      : undefined,
+  });
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      updateUser(user.id, {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar,
+      });
+      toast.success("Profile updated");
+      setProfileOpen(false);
+    } catch (e) {
+      toast.error("Failed to update profile");
+    }
+  };
 
   return (
     <div
@@ -66,7 +154,13 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className='flex-1 p-4 space-y-2'>
+      <nav
+        className={cn(
+          collapsed
+            ? "flex-1 py-4 space-y-2 flex flex-col items-center"
+            : "flex-1 p-4 space-y-2"
+        )}
+      >
         {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -75,13 +169,17 @@ export function Sidebar() {
             <Link key={item.name} href={item.href}>
               <div
                 className={cn(
-                  "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                  collapsed
+                    ? "flex items-center justify-center h-10 w-10 rounded-lg transition-colors text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    : "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                   isActive
                     ? "bg-[#F2EBFD] text-[#894DEF] border border-[#894DEF]/20"
                     : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                 )}
               >
-                <Icon className='h-5 w-5 flex-shrink-0' />
+                <Icon
+                  className={cn("flex-shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5")}
+                />
                 {!collapsed && <span className='ml-3'>{item.name}</span>}
               </div>
             </Link>
@@ -91,35 +189,168 @@ export function Sidebar() {
 
       {/* User Profile */}
       <div className='p-4 border-t border-gray-200'>
-        <div className='flex items-center space-x-3'>
-          <Avatar className='h-8 w-8'>
-            <AvatarImage src='https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100' />
-            <AvatarFallback>SM</AvatarFallback>
-          </Avatar>
-          {!collapsed && (
-            <div className='flex-1 min-w-0'>
-              <p className='text-sm font-medium text-gray-900 truncate'>
-                Sarah Marketing
-              </p>
-              <p className='text-xs text-gray-500'>Marketer</p>
-            </div>
-          )}
-        </div>
-
-        {!collapsed && (
-          <div className='mt-3 flex space-x-1'>
-            <Button variant='ghost' size='sm' className='h-8 px-2'>
-              <Settings className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='h-8 px-2 text-red-600 hover:text-red-700'
-            >
-              <LogOut className='h-4 w-4' />
-            </Button>
-          </div>
-        )}
+        <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div
+                className={cn(
+                  "cursor-pointer",
+                  collapsed
+                    ? "flex items-center justify-center"
+                    : "flex items-center justify-between"
+                )}
+              >
+                <div className='flex items-center space-x-3'>
+                  <Avatar className='h-8 w-8'>
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback>
+                      {user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  {!collapsed && (
+                    <div className='flex-1 min-w-0'>
+                      <p className='text-sm font-medium text-gray-900 truncate'>
+                        {user.name}
+                      </p>
+                      <p className='text-xs text-gray-500'>{user.role}</p>
+                    </div>
+                  )}
+                </div>
+                {!collapsed && (
+                  <div className='flex items-center space-x-1'>
+                    <Button variant='ghost' size='sm' className='h-8 px-2'>
+                      <Settings className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='h-8 px-2 text-red-600 hover:text-red-700'
+                    >
+                      <LogOut className='h-4 w-4' />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align={collapsed ? "center" : "end"} className='w-56'>
+              <DropdownMenuLabel className='flex flex-col items-start'>
+                <span className='font-semibold'>{user.name}</span>
+                <span className='text-xs text-gray-500'>{user.email}</span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className='text-red-600'>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent className='max-w-lg'>
+            <DialogHeader>
+              <DialogTitle>Profile</DialogTitle>
+              <DialogDescription>
+                Edit your profile and view your stats.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+              <div className='flex flex-col items-center gap-4'>
+                <Avatar className='h-20 w-20'>
+                  <AvatarImage src={watch("avatar")} />
+                  <AvatarFallback>
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='space-y-2'>
+                    <Label htmlFor='name'>Name</Label>
+                    <Input id='name' {...register("name")} />
+                    {errors.name && (
+                      <p className='text-xs text-red-600'>{errors.name.message}</p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='email'>Email</Label>
+                    <Input id='email' type='email' {...register("email")} />
+                    {errors.email && (
+                      <p className='text-xs text-red-600'>{errors.email.message}</p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='role'>Role</Label>
+                    <Select
+                      value={watch("role")}
+                      onValueChange={(v) => setValue("role", v as any)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='Admin'>Admin</SelectItem>
+                        <SelectItem value='Marketer'>Marketer</SelectItem>
+                        <SelectItem value='Designer'>Designer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {errors.role && (
+                      <p className='text-xs text-red-600'>{errors.role.message}</p>
+                    )}
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='avatar'>Avatar URL</Label>
+                    <Input id='avatar' {...register("avatar")} />
+                    {errors.avatar && (
+                      <p className='text-xs text-red-600'>{errors.avatar.message}</p>
+                    )}
+                  </div>
+                  <div className='space-y-2 flex items-center'>
+                    <Label htmlFor='isAdmin'>Admin</Label>
+                    <Switch
+                      id='isAdmin'
+                      checked={watch("role") === "Admin"}
+                      onCheckedChange={(checked) =>
+                        setValue("role", checked ? "Admin" : "Marketer")
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className='grid grid-cols-2 gap-4 text-center border-t pt-4'>
+                <div>
+                  <div className='text-2xl font-bold'>{completedTasks}</div>
+                  <div className='text-xs text-gray-500'>Completed Tasks</div>
+                </div>
+                <div>
+                  <div className='text-2xl font-bold'>{totalTasks}</div>
+                  <div className='text-xs text-gray-500'>Total Tasks</div>
+                </div>
+                <div>
+                  <div className='text-2xl font-bold'>{assignedCampaigns}</div>
+                  <div className='text-xs text-gray-500'>Assigned Campaigns</div>
+                </div>
+              </div>
+              <div className='flex justify-end gap-2'>
+                <DialogClose asChild>
+                  <Button type='button' variant='outline'>
+                    Close
+                  </Button>
+                </DialogClose>
+                <Button
+                  type='submit'
+                  disabled={isSubmitting}
+                  className='bg-[#894DEF] hover:bg-[#894DEF]/90'
+                >
+                  {isSubmitting ? "Saving..." : "Save"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
