@@ -2,9 +2,19 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'Admin' | 'Marketer' | 'Designer';
+  role: "Admin" | "Marketer" | "Designer" | "Developer";
   avatar?: string;
   createdAt: Date;
+}
+
+export interface Permission {
+  resource: string;
+  actions: string[];
+}
+
+export interface RolePermissions {
+  role: string;
+  permissions: Permission[];
 }
 
 export interface Client {
@@ -26,8 +36,8 @@ export interface Campaign {
   name: string;
   clientId: string;
   clientName: string;
-  platform: 'Google' | 'Meta' | 'TikTok' | 'LinkedIn' | 'Twitter';
-  status: 'Active' | 'Paused' | 'Finished' | 'Draft';
+  platform: "Google" | "Meta" | "TikTok" | "LinkedIn" | "Twitter";
+  status: "Active" | "Paused" | "Finished" | "Draft";
   startDate: Date;
   endDate: Date;
   budget: number;
@@ -41,9 +51,9 @@ export interface Campaign {
 export interface ContentItem {
   id: string;
   title: string;
-  type: 'Post' | 'Ad' | 'Email' | 'Story' | 'Video';
+  type: "Post" | "Ad" | "Email" | "Story" | "Video";
   assignedTo: string;
-  status: 'Draft' | 'Scheduled' | 'Published' | 'Cancelled';
+  status: "Draft" | "Scheduled" | "Published" | "Cancelled";
   platform: string;
   scheduledDate: Date;
   clientId: string;
@@ -56,8 +66,14 @@ export interface Lead {
   name: string;
   email: string;
   phone?: string;
-  source: 'Facebook Ad' | 'Google Ad' | 'Landing Page' | 'Referral' | 'Cold Outreach' | 'Social Media';
-  status: 'New' | 'Contacted' | 'Qualified' | 'Converted' | 'Lost';
+  source:
+    | "Facebook Ad"
+    | "Google Ad"
+    | "Landing Page"
+    | "Referral"
+    | "Cold Outreach"
+    | "Social Media";
+  status: "New" | "Contacted" | "Qualified" | "Converted" | "Lost";
   assignedTo?: string;
   notes?: string;
   value?: number;
@@ -69,10 +85,10 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'Todo' | 'In Progress' | 'Review' | 'Done';
+  status: "Todo" | "In Progress" | "Review" | "Done";
   assignedTo: string;
   dueDate?: Date;
-  priority: 'Low' | 'Medium' | 'High' | 'Urgent';
+  priority: "Low" | "Medium" | "High" | "Urgent";
   clientId?: string;
   campaignId?: string;
   comments?: Comment[];
@@ -93,7 +109,7 @@ export interface Invoice {
   clientId: string;
   clientName: string;
   amount: number;
-  status: 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Cancelled';
+  status: "Draft" | "Sent" | "Paid" | "Overdue" | "Cancelled";
   issueDate: Date;
   dueDate: Date;
   items: InvoiceItem[];

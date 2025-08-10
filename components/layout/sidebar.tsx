@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAppStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth/auth-provider";
+import { getAccessibleNavigation, hasPermission, roleConfig } from "@/lib/rbac";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -55,15 +56,46 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
-const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Clients", href: "/clients", icon: Users },
-  { name: "Campaigns", href: "/campaigns", icon: Target },
-  { name: "Content Calendar", href: "/content", icon: Calendar },
-  { name: "Leads", href: "/leads", icon: MessageSquare },
-  { name: "Tasks", href: "/tasks", icon: Zap },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "Invoices", href: "/invoices", icon: FileText },
+// Base navigation - will be filtered by RBAC
+const baseNavigation = [
+  { name: "Dashboard", href: "/", icon: Home, resource: "dashboard", action: "read" },
+  { name: "Clients", href: "/clients", icon: Users, resource: "clients", action: "read" },
+  {
+    name: "Campaigns",
+    href: "/campaigns",
+    icon: Target,
+    resource: "campaigns",
+    action: "read",
+  },
+  {
+    name: "Content Calendar",
+    href: "/content",
+    icon: Calendar,
+    resource: "content",
+    action: "read",
+  },
+  {
+    name: "Leads",
+    href: "/leads",
+    icon: MessageSquare,
+    resource: "leads",
+    action: "read",
+  },
+  { name: "Tasks", href: "/tasks", icon: Zap, resource: "tasks", action: "read" },
+  {
+    name: "Analytics",
+    href: "/analytics",
+    icon: BarChart3,
+    resource: "analytics",
+    action: "read",
+  },
+  {
+    name: "Invoices",
+    href: "/invoices",
+    icon: FileText,
+    resource: "invoices",
+    action: "read",
+  },
 ];
 
 export function Sidebar() {
@@ -76,16 +108,25 @@ export function Sidebar() {
 
   if (!user) return null;
 
+  // Get navigation items accessible to this user role
+  const accessibleNavigation = baseNavigation.filter(
+    (item) =>
+      item.resource === "dashboard" ||
+      hasPermission(user.role, item.resource, item.action)
+  );
+
   const completedTasks = tasks.filter(
     (t) => t.assignedTo === user.name && t.status === "Done"
   ).length;
   const totalTasks = tasks.filter((t) => t.assignedTo === user.name).length;
   const assignedCampaigns = campaigns.filter((c) => c.assignedTo === user.name).length;
 
+  const userRoleConfig = roleConfig[user.role as keyof typeof roleConfig];
+
   const profileSchema = z.object({
     name: z.string().min(2, "Name required"),
     email: z.string().email("Invalid email"),
-    role: z.enum(["Admin", "Marketer", "Designer"]),
+    role: z.enum(["Admin", "Marketer", "Designer", "Developer"]),
     isAdmin: z.boolean(),
     avatar: z.string().url("Must be a valid URL"),
   });
@@ -171,7 +212,7 @@ export function Sidebar() {
             : "flex-1 p-4 space-y-2"
         )}
       >
-        {navigation.map((item) => {
+        {accessibleNavigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
 
@@ -225,7 +266,13 @@ export function Sidebar() {
                       <p className='text-sm font-medium text-gray-900 truncate'>
                         {user.name}
                       </p>
-                      <p className='text-xs text-gray-500'>{user.role}</p>
+                      <div className='flex items-center gap-2'>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${userRoleConfig.badge}`}
+                        >
+                          {user.role}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -268,6 +315,19 @@ export function Sidebar() {
               <DialogDescription>
                 Edit your profile and view your stats.
               </DialogDescription>
+              <div
+                className={`p-3 rounded-lg border-l-4 bg-gray-50`}
+                style={{ borderLeftColor: userRoleConfig.color }}
+              >
+                <div className='flex items-center gap-2 mb-1'>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${userRoleConfig.badge}`}
+                  >
+                    {user.role}
+                  </span>
+                </div>
+                <p className='text-sm text-gray-600'>{userRoleConfig.description}</p>
+              </div>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
               <div className='flex flex-col items-center gap-4'>
@@ -308,6 +368,7 @@ export function Sidebar() {
                         <SelectItem value='Admin'>Admin</SelectItem>
                         <SelectItem value='Marketer'>Marketer</SelectItem>
                         <SelectItem value='Designer'>Designer</SelectItem>
+                        <SelectItem value='Developer'>Developer</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.role && (

@@ -77,6 +77,15 @@ export const useAppStore = create<AppState>()(
             "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
           createdAt: new Date("2024-02-15"),
         },
+        {
+          id: "4",
+          name: "Alex Developer",
+          email: "alex@nextoria.com",
+          role: "Developer",
+          avatar:
+            "https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=100",
+          createdAt: new Date("2024-03-01"),
+        },
       ],
       clients: [
         {

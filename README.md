@@ -12,6 +12,7 @@ A comprehensive digital marketing agency dashboard built with Next.js 13, TypeSc
 - **Invoice Management**: Generate and track invoices for client services
 - **Analytics**: Visual data representation with charts and metrics
 - **User Profiles**: Team member management with role-based access
+- **Role-Based Access Control (RBAC)**: Granular permissions for different agency roles
 
 ## 🚀 Demo Features
 
@@ -24,13 +25,44 @@ This demo version includes:
 
 ### Demo Credentials
 
-- **Email**: `demo@nextoria.com`
-- **Password**: `demo123`
+Test different role-based access levels with these accounts:
 
-Additional demo accounts:
+- **Admin**: `demo@nextoria.com` / `demo123` - Full access to all features
+- **Marketer**: `sarah@nextoria.com` / `sarah123` - Campaign & lead management
+- **Designer**: `mike@nextoria.com` / `mike123` - Content creation & design tasks
+- **Developer**: `alex@nextoria.com` / `alex123` - Technical tasks & analytics
 
-- `sarah@nextoria.com` / `sarah123` (Marketer role)
-- `mike@nextoria.com` / `mike123` (Designer role)
+## 🔐 Role-Based Access Control (RBAC)
+
+The app includes a comprehensive RBAC system with different permission levels:
+
+### Role Permissions:
+
+**Admin**
+
+- Full access to all features and data
+- User management and system settings
+- Can create, read, update, and delete all resources
+
+**Marketer**
+
+- Manage clients, campaigns, and leads
+- Access to analytics and reporting
+- Limited user management capabilities
+
+**Designer**
+
+- Focus on content creation and design tasks
+- Read access to client and campaign information
+- Full control over content calendar
+
+**Developer**
+
+- Access to technical tasks and analytics
+- Read-only access to clients and campaigns
+- Task management for development work
+
+Each role sees only relevant navigation items and features based on their permissions.
 
 ## 🛠️ Tech Stack
 
