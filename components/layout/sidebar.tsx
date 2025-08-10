@@ -39,6 +39,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useAppStore } from "@/lib/store";
+import { useAuth } from "@/lib/auth/auth-provider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -69,12 +70,12 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const pathname = usePathname();
-  const users = useAppStore((s) => s.users);
+  const { user, profile, updateProfile, signOut } = useAuth();
   const tasks = useAppStore((s) => s.tasks);
   const campaigns = useAppStore((s) => s.campaigns);
-  const updateUser = useAppStore((s) => s.updateUser);
-  // Use first user as current user (replace with real auth logic as needed)
-  const user = users[0];
+
+  if (!user) return null;
+
   const completedTasks = tasks.filter(
     (t) => t.assignedTo === user.name && t.status === "Done"
   ).length;
@@ -112,7 +113,7 @@ export function Sidebar() {
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      updateUser(user.id, {
+      await updateProfile({
         name: data.name,
         email: data.email,
         role: data.role,
@@ -122,6 +123,15 @@ export function Sidebar() {
       setProfileOpen(false);
     } catch (e) {
       toast.error("Failed to update profile");
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Signed out successfully");
+    } catch (error) {
+      toast.error("Failed to sign out");
     }
   };
 
@@ -228,6 +238,7 @@ export function Sidebar() {
                       variant='ghost'
                       size='sm'
                       className='h-8 px-2 text-red-600 hover:text-red-700'
+                      onClick={handleSignOut}
                     >
                       <LogOut className='h-4 w-4' />
                     </Button>
@@ -246,7 +257,9 @@ export function Sidebar() {
               </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className='text-red-600'>Logout</DropdownMenuItem>
+              <DropdownMenuItem className='text-red-600' onClick={handleSignOut}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <DialogContent className='max-w-lg'>

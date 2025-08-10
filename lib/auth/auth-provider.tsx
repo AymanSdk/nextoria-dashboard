@@ -1,141 +1,176 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
-import { createSupabaseClient } from '@/lib/supabase/client';
-import { Database } from '@/lib/supabase/types';
+import { createContext, useContext, useEffect, useState } from "react";
 
-type UserProfile = Database['public']['Tables']['users']['Row'];
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: "Admin" | "Marketer" | "Designer";
+  avatar?: string;
+  createdAt: Date;
+}
 
 interface AuthContextType {
   user: User | null;
-  profile: UserProfile | null;
+  profile: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string, role?: string) => Promise<void>;
   signOut: () => Promise<void>;
-  updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+  updateProfile: (updates: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createSupabaseClient();
+
+  // Demo users for local authentication
+  const demoUsers: User[] = [
+    {
+      id: "1",
+      name: "John Admin",
+      email: "demo@nextoria.com",
+      role: "Admin",
+      avatar:
+        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100",
+      createdAt: new Date("2024-01-15"),
+    },
+    {
+      id: "2",
+      name: "Sarah Marketing",
+      email: "sarah@nextoria.com",
+      role: "Marketer",
+      avatar:
+        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100",
+      createdAt: new Date("2024-02-01"),
+    },
+    {
+      id: "3",
+      name: "Mike Designer",
+      email: "mike@nextoria.com",
+      role: "Designer",
+      avatar:
+        "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
+      createdAt: new Date("2024-02-15"),
+    },
+  ];
+
+  // Demo credentials
+  const demoCredentials = [
+    { email: "demo@nextoria.com", password: "demo123" },
+    { email: "sarah@nextoria.com", password: "sarah123" },
+    { email: "mike@nextoria.com", password: "mike123" },
+  ];
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        await fetchUserProfile(session.user.id);
+    // Check for existing auth session in localStorage
+    const checkAuthSession = () => {
+      try {
+        const authData = localStorage.getItem("nextoria-auth");
+        if (authData) {
+          const userData = JSON.parse(authData);
+          // Convert createdAt string back to Date
+          if (userData.createdAt) {
+            userData.createdAt = new Date(userData.createdAt);
+          }
+          setUser(userData);
+          setProfile(userData);
+        }
+      } catch (error) {
+        console.error("Error loading auth session:", error);
+        localStorage.removeItem("nextoria-auth");
       }
-      
       setLoading(false);
     };
 
-    getInitialSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchUserProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth]);
-
-  const fetchUserProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return;
-      }
-
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
+    checkAuthSession();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (error) {
-      throw error;
+    const credential = demoCredentials.find(
+      (cred) => cred.email === email && cred.password === password
+    );
+
+    if (!credential) {
+      throw new Error("Invalid email or password");
     }
+
+    const foundUser = demoUsers.find((user) => user.email === email);
+
+    if (!foundUser) {
+      throw new Error("User not found");
+    }
+
+    // Store auth session in localStorage
+    localStorage.setItem("nextoria-auth", JSON.stringify(foundUser));
+    setUser(foundUser);
+    setProfile(foundUser);
   };
 
-  const signUp = async (email: string, password: string, name: string, role = 'Marketer') => {
-    const { data, error } = await supabase.auth.signUp({
+  const signUp = async (
+    email: string,
+    password: string,
+    name: string,
+    role = "Marketer"
+  ) => {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Check if user already exists
+    const existingUser = demoUsers.find((user) => user.email === email);
+    if (existingUser) {
+      throw new Error("User already exists with this email");
+    }
+
+    // Create new user
+    const newUser: User = {
+      id: Math.random().toString(36).substr(2, 9),
       email,
-      password,
-    });
+      name,
+      role: role as "Admin" | "Marketer" | "Designer",
+      avatar:
+        "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
+      createdAt: new Date(),
+    };
 
-    if (error) {
-      throw error;
-    }
+    // Store user credentials and data
+    demoUsers.push(newUser);
+    demoCredentials.push({ email, password });
 
-    // Create user profile
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert({
-          id: data.user.id,
-          email,
-          name,
-          role: role as 'Admin' | 'Marketer' | 'Designer',
-        });
-
-      if (profileError) {
-        console.error('Error creating user profile:', profileError);
-      }
-    }
+    // Store auth session in localStorage
+    localStorage.setItem("nextoria-auth", JSON.stringify(newUser));
+    setUser(newUser);
+    setProfile(newUser);
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
+    localStorage.removeItem("nextoria-auth");
+    setUser(null);
+    setProfile(null);
   };
 
-  const updateProfile = async (updates: Partial<UserProfile>) => {
+  const updateProfile = async (updates: Partial<User>) => {
     if (!user) return;
 
-    const { error } = await supabase
-      .from('users')
-      .update(updates)
-      .eq('id', user.id);
+    const updatedUser = { ...user, ...updates };
 
-    if (error) {
-      throw error;
+    // Update in demo users array
+    const userIndex = demoUsers.findIndex((u) => u.id === user.id);
+    if (userIndex !== -1) {
+      demoUsers[userIndex] = updatedUser;
     }
 
-    // Refresh profile
-    await fetchUserProfile(user.id);
+    // Update localStorage
+    localStorage.setItem("nextoria-auth", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    setProfile(updatedUser);
   };
 
   const value = {
@@ -148,17 +183,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     updateProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
