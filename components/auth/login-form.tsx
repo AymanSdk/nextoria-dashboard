@@ -70,64 +70,56 @@ export function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50/50 via-white to-indigo-50/30 p-4 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-100/40 via-white to-indigo-50/60"></div>
-        <div className="absolute top-0 left-1/3 w-72 h-72 bg-gradient-to-br from-purple-200/40 via-purple-100/30 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-gradient-to-tl from-indigo-200/40 via-purple-100/30 to-transparent rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-gradient-to-r from-violet-100/40 to-transparent rounded-full blur-2xl"></div>
-      </div>
-
-      <Card className="w-full max-w-md bg-white/80 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(147,51,234,0.1)] rounded-3xl relative z-10 overflow-hidden">
-        {/* Glass effect overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/10 to-transparent pointer-events-none"></div>
-        <CardHeader className="text-center px-6 pt-8 pb-6 relative z-10">
-          <div className="flex items-center justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 rounded-xl blur-lg opacity-20"></div>
-              <div className="relative p-3 rounded-xl bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-700 shadow-xl">
-                <Zap className="h-6 w-6 text-white drop-shadow-sm" />
-              </div>
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-white p-6">
+      <div className="w-full max-w-sm">
+        {/* Logo and Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-3xl mb-8 shadow-lg">
+            <Zap className="h-8 w-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-semibold text-gray-900 tracking-tight mb-2">
-            Welcome Back
-          </CardTitle>
-          <CardDescription className="text-sm text-gray-600 leading-relaxed">
-            Sign in to your Nextoria dashboard
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-6 pb-8 relative z-10">
+          <h1 className="text-4xl font-thin text-gray-900 tracking-tight mb-3">
+            Sign In
+          </h1>
+          <p className="text-lg text-gray-500 font-light">
+            Continue to Nextoria
+          </p>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-8">
           <form
             onSubmit={loginForm.handleSubmit(onLogin)}
-            className="space-y-4"
+            className="space-y-6"
           >
-            <div className="space-y-2">
+            {/* Email Field */}
+            <div className="space-y-3">
               <Label
                 htmlFor="email"
-                className="text-sm font-medium text-gray-700"
+                className="text-base font-medium text-gray-900 block"
               >
-                Email
+                Email Address
               </Label>
-              <Input
-                id="email"
-                type="email"
-                {...loginForm.register("email")}
-                placeholder="john@company.com"
-                className="h-11 border-gray-200 rounded-lg bg-white focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 text-sm"
-              />
+              <div className="relative">
+                <Input
+                  id="email"
+                  type="email"
+                  {...loginForm.register("email")}
+                  placeholder="Enter your email"
+                  className="h-14 text-lg border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-black focus:ring-0 px-0 transition-colors duration-300 placeholder:text-gray-400"
+                />
+              </div>
               {loginForm.formState.errors.email && (
-                <p className="text-xs text-red-500 mt-1">
+                <p className="text-sm text-red-500 font-medium">
                   {loginForm.formState.errors.email.message}
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
+            {/* Password Field */}
+            <div className="space-y-3">
               <Label
                 htmlFor="password"
-                className="text-sm font-medium text-gray-700"
+                className="text-base font-medium text-gray-900 block"
               >
                 Password
               </Label>
@@ -136,88 +128,138 @@ export function LoginForm() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   {...loginForm.register("password")}
-                  placeholder="••••••••"
-                  className="h-11 border-gray-200 rounded-lg bg-white focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-200 text-sm pr-10"
+                  placeholder="Enter your password"
+                  className="h-14 text-lg border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-black focus:ring-0 px-0 pr-10 transition-colors duration-300 placeholder:text-gray-400"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-gray-100 rounded-md"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 h-10 w-10 p-0 hover:bg-gray-100 rounded-full"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
+                    <EyeOff className="h-5 w-5 text-gray-400" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
+                    <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </Button>
               </div>
               {loginForm.formState.errors.password && (
-                <p className="text-xs text-red-500 mt-1">
+                <p className="text-sm text-red-500 font-medium">
                   {loginForm.formState.errors.password.message}
                 </p>
               )}
             </div>
 
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center space-x-2 pt-1">
+            {/* Remember Me */}
+            <div className="flex items-center space-x-3 pt-4">
               <Checkbox
                 id="remember"
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
+                className="data-[state=checked]:bg-black data-[state=checked]:border-black border-2 border-gray-300 rounded-lg h-5 w-5"
               />
               <Label
                 htmlFor="remember"
-                className="text-sm text-gray-700 cursor-pointer"
+                className="text-base text-gray-700 cursor-pointer font-normal"
               >
-                Remember me
+                Keep me signed in
               </Label>
             </div>
 
+            {/* Sign In Button */}
             <Button
               type="submit"
-              className="w-full h-11 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium text-sm transition-all duration-200 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 mt-6"
+              className="w-full h-14 bg-black hover:bg-gray-800 text-white text-lg font-medium rounded-2xl transition-all duration-200 mt-10 active:scale-95"
               disabled={loginForm.formState.isSubmitting}
             >
-              {loginForm.formState.isSubmitting ? "Signing In..." : "Sign In"}
+              {loginForm.formState.isSubmitting ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Signing In...</span>
+                </div>
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50/80 backdrop-blur-sm rounded-2xl border border-gray-100">
-            <p className="text-xs font-semibold text-gray-700 mb-3 tracking-wide">
-              Demo Accounts
-            </p>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center text-xs bg-white/70 rounded-lg p-2 backdrop-blur-sm">
-                <span className="font-medium text-gray-900">Admin</span>
-                <span className="text-gray-600 font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">
-                  demo@nextoria.com / demo123
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs bg-white/70 rounded-lg p-2 backdrop-blur-sm">
-                <span className="font-medium text-gray-900">Marketer</span>
-                <span className="text-gray-600 font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">
-                  sarah@nextoria.com / sarah123
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs bg-white/70 rounded-lg p-2 backdrop-blur-sm">
-                <span className="font-medium text-gray-900">Designer</span>
-                <span className="text-gray-600 font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">
-                  mike@nextoria.com / mike123
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs bg-white/70 rounded-lg p-2 backdrop-blur-sm">
-                <span className="font-medium text-gray-900">Developer</span>
-                <span className="text-gray-600 font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">
-                  alex@nextoria.com / alex123
-                </span>
-              </div>
+          {/* Divider */}
+          <div className="relative my-10">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500 font-medium">
+                Demo Accounts
+              </span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Demo Accounts */}
+          <div className="space-y-4">
+            {[
+              {
+                role: "Admin",
+                email: "demo@nextoria.com",
+                password: "demo123",
+              },
+              {
+                role: "Marketer",
+                email: "sarah@nextoria.com",
+                password: "sarah123",
+              },
+              {
+                role: "Designer",
+                email: "mike@nextoria.com",
+                password: "mike123",
+              },
+              {
+                role: "Developer",
+                email: "alex@nextoria.com",
+                password: "alex123",
+              },
+            ].map((account) => (
+              <button
+                key={account.role}
+                type="button"
+                onClick={() => {
+                  loginForm.setValue("email", account.email);
+                  loginForm.setValue("password", account.password);
+                }}
+                className="w-full p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors duration-200 group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-gray-900 text-base">
+                      {account.role}
+                    </div>
+                    <div className="text-sm text-gray-500 font-mono">
+                      {account.email}
+                    </div>
+                  </div>
+                  <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
