@@ -21,83 +21,111 @@ export default function Dashboard() {
   };
 
   return (
-    <div className='min-h-full'>
+    <div className="min-h-full">
       {/* Apple-inspired Hero Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        className='relative mb-12'
+        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        className="relative mb-8 md:mb-12"
       >
-        <div className='absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl opacity-60'></div>
-        <div className='relative bg-white/60 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-apple-soft'>
-          <div className='flex items-start justify-between'>
-            <div className='space-y-4'>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className='flex items-center gap-3'
-              >
-                <div className='p-2 bg-gradient-primary rounded-2xl shadow-apple-glow'>
-                  <Sparkles className='w-6 h-6 text-white' />
-                </div>
-                <div>
-                  <h1 className='text-4xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent'>
-                    {getCurrentGreeting()}, {user.name}
-                  </h1>
-                  <p className='text-lg text-gray-600 font-medium mt-1'>
-                    Welcome to your marketing command center
-                  </p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className='flex items-center gap-2'
-              >
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${
-                    user.role === "Admin"
-                      ? "from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/25"
-                      : user.role === "Marketer"
-                      ? "from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/25"
-                      : user.role === "Designer"
-                      ? "from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/25"
-                      : "from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/25"
-                  }`}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-6 md:p-8 lg:p-10">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+              {/* Main Content */}
+              <div className="flex-1 space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="flex items-start"
                 >
-                  {user.role}
-                </span>
-                <span className='text-gray-500 text-sm'>•</span>
-                <p className='text-gray-600 text-sm font-medium'>
-                  {userRoleConfig.description}
-                </p>
+                  <div className="min-w-0 flex-1">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-thin text-gray-900 tracking-tight leading-tight">
+                      {getCurrentGreeting()},
+                      <br className="hidden sm:block" />
+                      <span className="font-light"> {user.name}</span>
+                    </h1>
+                    <p className="text-base md:text-lg text-gray-500 font-light mt-3 max-w-lg">
+                      Welcome to your marketing command center
+                    </p>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="flex flex-wrap items-center gap-3"
+                >
+                  <span
+                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border-2 ${
+                      user.role === "Admin"
+                        ? "bg-purple-50 text-purple-700 border-purple-200"
+                        : user.role === "Marketer"
+                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                        : user.role === "Designer"
+                        ? "bg-orange-50 text-orange-700 border-orange-200"
+                        : "bg-green-50 text-green-700 border-green-200"
+                    }`}
+                  >
+                    {user.role}
+                  </span>
+                  <span className="hidden sm:inline text-gray-300">•</span>
+                  <p className="text-gray-600 text-sm font-normal hidden sm:block max-w-xs">
+                    {userRoleConfig.description}
+                  </p>
+                </motion.div>
+              </div>
+
+              {/* Quick Stats - Redesigned */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="flex lg:flex-col gap-3 lg:gap-4"
+              >
+                <div className="flex-1 lg:flex-none bg-gray-50 rounded-2xl p-4 lg:p-5 border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-thin text-gray-900">+12.5%</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Growth
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 lg:flex-none bg-gray-50 rounded-2xl p-4 lg:p-5 border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-thin text-gray-900">2.4k</p>
+                      <p className="text-xs text-gray-500 font-medium">Users</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 lg:flex-none bg-gray-50 rounded-2xl p-4 lg:p-5 border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                      <Zap className="w-5 h-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-thin text-gray-900">98%</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Uptime
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </div>
-
-            {/* Quick Stats Indicators */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className='hidden lg:flex items-center gap-4'
-            >
-              <div className='flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/30 shadow-apple-soft'>
-                <TrendingUp className='w-4 h-4 text-green-500' />
-                <span className='text-sm font-semibold text-gray-700'>+12.5%</span>
-              </div>
-              <div className='flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/30 shadow-apple-soft'>
-                <Users className='w-4 h-4 text-blue-500' />
-                <span className='text-sm font-semibold text-gray-700'>2.4k</span>
-              </div>
-              <div className='flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/30 shadow-apple-soft'>
-                <Zap className='w-4 h-4 text-yellow-500' />
-                <span className='text-sm font-semibold text-gray-700'>98%</span>
-              </div>
-            </motion.div>
           </div>
         </div>
       </motion.div>
@@ -106,7 +134,8 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ delay: 0.4, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        className="space-y-6"
       >
         <DashboardData />
       </motion.div>
