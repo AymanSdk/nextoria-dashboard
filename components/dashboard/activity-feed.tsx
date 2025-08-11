@@ -37,31 +37,31 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     switch (action) {
       case "Campaign updated":
         return (
-          <Badge className='bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 shadow-lg shadow-purple-500/25'>
+          <Badge className="bg-purple-50 text-purple-600 border border-purple-200 font-medium">
             Campaign
           </Badge>
         );
       case "New lead":
         return (
-          <Badge className='bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-0 shadow-lg shadow-emerald-500/25'>
+          <Badge className="bg-green-50 text-green-600 border border-green-200 font-medium">
             Lead
           </Badge>
         );
       case "Content published":
         return (
-          <Badge className='bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0 shadow-lg shadow-blue-500/25'>
+          <Badge className="bg-blue-50 text-blue-600 border border-blue-200 font-medium">
             Content
           </Badge>
         );
       case "Task completed":
         return (
-          <Badge className='bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 shadow-lg shadow-orange-500/25'>
+          <Badge className="bg-orange-50 text-orange-600 border border-orange-200 font-medium">
             Task
           </Badge>
         );
       default:
         return (
-          <Badge className='bg-gradient-to-r from-gray-500 to-gray-600 text-white border-0'>
+          <Badge className="bg-gray-50 text-gray-600 border border-gray-200 font-medium">
             Update
           </Badge>
         );
@@ -118,72 +118,72 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.4 }}
     >
-      <Card className='bg-white/70 backdrop-blur-xl border border-white/20 shadow-apple-soft hover:shadow-apple-medium transition-all duration-300'>
-        <CardHeader className='pb-4'>
-          <div className='flex items-center gap-3'>
-            <div className='p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg'>
-              <Activity className='w-5 h-5 text-white' />
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gray-100 rounded-xl">
+              <Activity className="w-5 h-5 text-gray-600" />
             </div>
             <div>
-              <CardTitle className='text-xl font-bold text-gray-900'>
+              <CardTitle className="text-xl font-thin text-gray-900">
                 Recent Activity
               </CardTitle>
-              <p className='text-sm text-gray-600 mt-1'>Latest updates from your team</p>
+              <p className="text-sm text-gray-500 mt-1 font-medium">
+                Latest updates from your team
+              </p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <motion.div
             variants={containerVariants}
-            initial='hidden'
-            animate='visible'
-            className='space-y-4'
+            initial="hidden"
+            animate="visible"
+            className="space-y-4"
           >
             {activities.map((activity, index) => (
               <motion.div
                 key={activity.id}
-                variants={itemVariants}
-                whileHover={{
-                  x: 4,
-                  transition: { type: "spring", stiffness: 400, damping: 25 },
-                }}
-                className='group'
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group"
               >
-                <div className='flex items-start space-x-4 p-3 rounded-2xl hover:bg-white/50 transition-all duration-200'>
-                  <div className='relative'>
-                    <Avatar className='h-10 w-10 ring-2 ring-white shadow-apple-soft'>
+                <div className="flex items-start space-x-4 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                  <div className="relative">
+                    <Avatar className="h-10 w-10 border-2 border-gray-100">
                       <AvatarImage
                         src={`https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100`}
                       />
-                      <AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold'>
+                      <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
                         {activity.user
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <div className='absolute -bottom-1 -right-1 text-lg'>
+                    <div className="absolute -bottom-1 -right-1 text-sm">
                       {getActivityIcon(activity.action)}
                     </div>
                   </div>
 
-                  <div className='flex-1 min-w-0'>
-                    <div className='flex items-center gap-2 mb-2'>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
                       {getActionBadge(activity.action)}
-                      <div className='flex items-center gap-1 text-gray-500'>
-                        <Clock className='w-3 h-3' />
-                        <span className='text-xs font-medium'>
+                      <div className="flex items-center gap-1 text-gray-500">
+                        <Clock className="w-3 h-3" />
+                        <span className="text-xs font-medium">
                           {formatTime(activity.timestamp)}
                         </span>
                       </div>
                     </div>
 
-                    <p className='text-sm text-gray-900 font-semibold group-hover:text-gray-700 transition-colors mb-1'>
+                    <p className="text-sm text-gray-900 font-medium group-hover:text-gray-700 transition-colors mb-1">
                       {activity.details}
                     </p>
 
-                    <div className='flex items-center gap-1 text-xs text-gray-500'>
-                      <Users2 className='w-3 h-3' />
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <Users2 className="w-3 h-3" />
                       <span>by {activity.user}</span>
                     </div>
                   </div>
@@ -192,13 +192,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             ))}
 
             {/* View All Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className='w-full mt-4 p-3 text-sm font-semibold text-gray-600 hover:text-gray-800 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 rounded-2xl transition-all duration-200 border border-gray-200/50'
-            >
+            <button className="w-full mt-6 p-3 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200">
               View all activity
-            </motion.button>
+            </button>
           </motion.div>
         </CardContent>
       </Card>

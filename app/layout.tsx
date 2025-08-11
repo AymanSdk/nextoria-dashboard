@@ -14,18 +14,22 @@ export const metadata: Metadata = {
   description: "Internal admin dashboard for digital marketing agency",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
           <AuthGuard>
-            <div className='flex h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20'>
+            <div className="flex h-screen bg-gray-50">
               <Sidebar />
-              <div className='flex-1 flex flex-col overflow-hidden'>
+              <div className="flex-1 flex flex-col overflow-hidden">
                 <Header />
-                <main className='flex-1 overflow-auto p-8 bg-gradient-to-b from-transparent to-white/10'>
-                  <div className='max-w-none'>{children}</div>
+                <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+                  <div className="max-w-none">{children}</div>
                 </main>
               </div>
             </div>

@@ -58,8 +58,20 @@ import { toast } from "sonner";
 
 // Base navigation - will be filtered by RBAC
 const baseNavigation = [
-  { name: "Dashboard", href: "/", icon: Home, resource: "dashboard", action: "read" },
-  { name: "Clients", href: "/clients", icon: Users, resource: "clients", action: "read" },
+  {
+    name: "Dashboard",
+    href: "/",
+    icon: Home,
+    resource: "dashboard",
+    action: "read",
+  },
+  {
+    name: "Clients",
+    href: "/clients",
+    icon: Users,
+    resource: "clients",
+    action: "read",
+  },
   {
     name: "Campaigns",
     href: "/campaigns",
@@ -81,7 +93,13 @@ const baseNavigation = [
     resource: "leads",
     action: "read",
   },
-  { name: "Tasks", href: "/tasks", icon: Zap, resource: "tasks", action: "read" },
+  {
+    name: "Tasks",
+    href: "/tasks",
+    icon: Zap,
+    resource: "tasks",
+    action: "read",
+  },
   {
     name: "Analytics",
     href: "/analytics",
@@ -119,7 +137,9 @@ export function Sidebar() {
     (t) => t.assignedTo === user.name && t.status === "Done"
   ).length;
   const totalTasks = tasks.filter((t) => t.assignedTo === user.name).length;
-  const assignedCampaigns = campaigns.filter((c) => c.assignedTo === user.name).length;
+  const assignedCampaigns = campaigns.filter(
+    (c) => c.assignedTo === user.name
+  ).length;
 
   const userRoleConfig = roleConfig[user.role as keyof typeof roleConfig];
 
@@ -179,27 +199,32 @@ export function Sidebar() {
   return (
     <div
       className={cn(
-        "flex flex-col bg-white border-r border-gray-200 transition-all duration-300",
+        "flex flex-col bg-white border-r border-gray-100 transition-all duration-300 shadow-sm",
         collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Header */}
-      <div className='flex items-center justify-between p-4 border-b border-gray-200'>
+      <div className="flex items-center justify-between p-4 border-b border-gray-100">
         {!collapsed && (
-          <div className='flex items-center space-x-2'>
-            <Image src='/logo.svg' alt='Nextoria Logo' width={120} height={36} />
+          <div className="flex items-center space-x-2">
+            <Image
+              src="/logo.svg"
+              alt="Nextoria Logo"
+              width={120}
+              height={36}
+            />
           </div>
         )}
         <Button
-          variant='ghost'
-          size='sm'
+          variant="ghost"
+          size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className='h-8 w-8 p-0'
+          className="h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
         >
           {collapsed ? (
-            <ChevronRight className='h-4 w-4' />
+            <ChevronRight className="h-4 w-4" />
           ) : (
-            <ChevronLeft className='h-4 w-4' />
+            <ChevronLeft className="h-4 w-4" />
           )}
         </Button>
       </div>
@@ -208,8 +233,8 @@ export function Sidebar() {
       <nav
         className={cn(
           collapsed
-            ? "flex-1 py-4 space-y-2 flex flex-col items-center"
-            : "flex-1 p-4 space-y-2"
+            ? "flex-1 py-4 space-y-1 flex flex-col items-center"
+            : "flex-1 p-4 space-y-1"
         )}
       >
         {accessibleNavigation.map((item) => {
@@ -221,17 +246,22 @@ export function Sidebar() {
               <div
                 className={cn(
                   collapsed
-                    ? "flex items-center justify-center h-10 w-10 rounded-lg transition-colors text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                    : "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    ? "flex items-center justify-center h-10 w-10 rounded-xl transition-all duration-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    : "flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
                   isActive
-                    ? "bg-[#F2EBFD] text-[#894DEF] border border-[#894DEF]/20"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    ? "bg-black text-white shadow-lg"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
                 <Icon
-                  className={cn("flex-shrink-0", collapsed ? "h-6 w-6" : "h-5 w-5")}
+                  className={cn(
+                    "flex-shrink-0",
+                    collapsed ? "h-5 w-5" : "h-5 w-5"
+                  )}
                 />
-                {!collapsed && <span className='ml-3'>{item.name}</span>}
+                {!collapsed && (
+                  <span className="ml-3 font-medium">{item.name}</span>
+                )}
               </div>
             </Link>
           );
@@ -239,22 +269,22 @@ export function Sidebar() {
       </nav>
 
       {/* User Profile */}
-      <div className='p-4 border-t border-gray-200'>
+      <div className="p-4 border-t border-gray-100">
         <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div
                 className={cn(
-                  "cursor-pointer",
+                  "cursor-pointer hover:bg-gray-50 rounded-xl transition-colors duration-200 p-2",
                   collapsed
                     ? "flex items-center justify-center"
                     : "flex items-center justify-between"
                 )}
               >
-                <div className='flex items-center space-x-3'>
-                  <Avatar className='h-8 w-8'>
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-8 w-8 border-2 border-gray-100">
                     <AvatarImage src={user.avatar} />
-                    <AvatarFallback>
+                    <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
                       {user.name
                         .split(" ")
                         .map((n) => n[0])
@@ -262,14 +292,12 @@ export function Sidebar() {
                     </AvatarFallback>
                   </Avatar>
                   {!collapsed && (
-                    <div className='flex-1 min-w-0'>
-                      <p className='text-sm font-medium text-gray-900 truncate'>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
                         {user.name}
                       </p>
-                      <div className='flex items-center gap-2'>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${userRoleConfig.badge}`}
-                        >
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                           {user.role}
                         </span>
                       </div>
@@ -277,26 +305,33 @@ export function Sidebar() {
                   )}
                 </div>
                 {!collapsed && (
-                  <div className='flex items-center space-x-1'>
-                    <Button variant='ghost' size='sm' className='h-8 px-2'>
-                      <Settings className='h-4 w-4' />
+                  <div className="flex items-center space-x-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
+                    >
+                      <Settings className="h-4 w-4 text-gray-500" />
                     </Button>
                     <Button
-                      variant='ghost'
-                      size='sm'
-                      className='h-8 px-2 text-red-600 hover:text-red-700'
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full"
                       onClick={handleSignOut}
                     >
-                      <LogOut className='h-4 w-4' />
+                      <LogOut className="h-4 w-4" />
                     </Button>
                   </div>
                 )}
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align={collapsed ? "center" : "end"} className='w-56'>
-              <DropdownMenuLabel className='flex flex-col items-start'>
-                <span className='font-semibold'>{user.name}</span>
-                <span className='text-xs text-gray-500'>{user.email}</span>
+            <DropdownMenuContent
+              align={collapsed ? "center" : "end"}
+              className="w-56"
+            >
+              <DropdownMenuLabel className="flex flex-col items-start">
+                <span className="font-semibold">{user.name}</span>
+                <span className="text-xs text-gray-500">{user.email}</span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onSelect={() => setProfileOpen(true)}>
@@ -304,12 +339,15 @@ export function Sidebar() {
               </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className='text-red-600' onClick={handleSignOut}>
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={handleSignOut}
+              >
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DialogContent className='max-w-lg'>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>Profile</DialogTitle>
               <DialogDescription>
@@ -319,19 +357,21 @@ export function Sidebar() {
                 className={`p-3 rounded-lg border-l-4 bg-gray-50`}
                 style={{ borderLeftColor: userRoleConfig.color }}
               >
-                <div className='flex items-center gap-2 mb-1'>
+                <div className="flex items-center gap-2 mb-1">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${userRoleConfig.badge}`}
                   >
                     {user.role}
                   </span>
                 </div>
-                <p className='text-sm text-gray-600'>{userRoleConfig.description}</p>
+                <p className="text-sm text-gray-600">
+                  {userRoleConfig.description}
+                </p>
               </div>
             </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
-              <div className='flex flex-col items-center gap-4'>
-                <Avatar className='h-20 w-20'>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="flex flex-col items-center gap-4">
+                <Avatar className="h-20 w-20">
                   <AvatarImage src={watch("avatar")} />
                   <AvatarFallback>
                     {user.name
@@ -340,23 +380,27 @@ export function Sidebar() {
                       .join("")}
                   </AvatarFallback>
                 </Avatar>
-                <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='name'>Name</Label>
-                    <Input id='name' {...register("name")} />
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input id="name" {...register("name")} />
                     {errors.name && (
-                      <p className='text-xs text-red-600'>{errors.name.message}</p>
+                      <p className="text-xs text-red-600">
+                        {errors.name.message}
+                      </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='email'>Email</Label>
-                    <Input id='email' type='email' {...register("email")} />
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" {...register("email")} />
                     {errors.email && (
-                      <p className='text-xs text-red-600'>{errors.email.message}</p>
+                      <p className="text-xs text-red-600">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='role'>Role</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Role</Label>
                     <Select
                       value={watch("role")}
                       onValueChange={(v) => setValue("role", v as any)}
@@ -365,27 +409,31 @@ export function Sidebar() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='Admin'>Admin</SelectItem>
-                        <SelectItem value='Marketer'>Marketer</SelectItem>
-                        <SelectItem value='Designer'>Designer</SelectItem>
-                        <SelectItem value='Developer'>Developer</SelectItem>
+                        <SelectItem value="Admin">Admin</SelectItem>
+                        <SelectItem value="Marketer">Marketer</SelectItem>
+                        <SelectItem value="Designer">Designer</SelectItem>
+                        <SelectItem value="Developer">Developer</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.role && (
-                      <p className='text-xs text-red-600'>{errors.role.message}</p>
+                      <p className="text-xs text-red-600">
+                        {errors.role.message}
+                      </p>
                     )}
                   </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='avatar'>Avatar URL</Label>
-                    <Input id='avatar' {...register("avatar")} />
+                  <div className="space-y-2">
+                    <Label htmlFor="avatar">Avatar URL</Label>
+                    <Input id="avatar" {...register("avatar")} />
                     {errors.avatar && (
-                      <p className='text-xs text-red-600'>{errors.avatar.message}</p>
+                      <p className="text-xs text-red-600">
+                        {errors.avatar.message}
+                      </p>
                     )}
                   </div>
-                  <div className='space-y-2 flex items-center'>
-                    <Label htmlFor='isAdmin'>Admin</Label>
+                  <div className="space-y-2 flex items-center">
+                    <Label htmlFor="isAdmin">Admin</Label>
                     <Switch
-                      id='isAdmin'
+                      id="isAdmin"
                       checked={watch("role") === "Admin"}
                       onCheckedChange={(checked) =>
                         setValue("role", checked ? "Admin" : "Marketer")
@@ -394,30 +442,32 @@ export function Sidebar() {
                   </div>
                 </div>
               </div>
-              <div className='grid grid-cols-2 gap-4 text-center border-t pt-4'>
+              <div className="grid grid-cols-2 gap-4 text-center border-t pt-4">
                 <div>
-                  <div className='text-2xl font-bold'>{completedTasks}</div>
-                  <div className='text-xs text-gray-500'>Completed Tasks</div>
+                  <div className="text-2xl font-bold">{completedTasks}</div>
+                  <div className="text-xs text-gray-500">Completed Tasks</div>
                 </div>
                 <div>
-                  <div className='text-2xl font-bold'>{totalTasks}</div>
-                  <div className='text-xs text-gray-500'>Total Tasks</div>
+                  <div className="text-2xl font-bold">{totalTasks}</div>
+                  <div className="text-xs text-gray-500">Total Tasks</div>
                 </div>
                 <div>
-                  <div className='text-2xl font-bold'>{assignedCampaigns}</div>
-                  <div className='text-xs text-gray-500'>Assigned Campaigns</div>
+                  <div className="text-2xl font-bold">{assignedCampaigns}</div>
+                  <div className="text-xs text-gray-500">
+                    Assigned Campaigns
+                  </div>
                 </div>
               </div>
-              <div className='flex justify-end gap-2'>
+              <div className="flex justify-end gap-2">
                 <DialogClose asChild>
-                  <Button type='button' variant='outline'>
+                  <Button type="button" variant="outline">
                     Close
                   </Button>
                 </DialogClose>
                 <Button
-                  type='submit'
+                  type="submit"
                   disabled={isSubmitting}
-                  className='bg-[#894DEF] hover:bg-[#894DEF]/90'
+                  className="bg-[#894DEF] hover:bg-[#894DEF]/90"
                 >
                   {isSubmitting ? "Saving..." : "Save"}
                 </Button>

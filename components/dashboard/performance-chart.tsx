@@ -25,16 +25,16 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className='bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-apple-medium'>
-          <p className='text-sm font-semibold text-gray-800 mb-2'>{label}</p>
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-lg">
+          <p className="text-sm font-medium text-gray-900 mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className='flex items-center gap-2 mb-1'>
+            <div key={index} className="flex items-center gap-2 mb-1">
               <div
-                className='w-3 h-3 rounded-full'
+                className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: entry.color }}
               />
-              <span className='text-sm text-gray-600'>{entry.name}:</span>
-              <span className='text-sm font-semibold text-gray-800'>
+              <span className="text-sm text-gray-600">{entry.name}:</span>
+              <span className="text-sm font-medium text-gray-900">
                 {entry.value?.toLocaleString()}
               </span>
             </div>
@@ -51,59 +51,71 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
     >
-      <Card className='bg-white/70 backdrop-blur-xl border border-white/20 shadow-apple-soft hover:shadow-apple-medium transition-all duration-300'>
-        <CardHeader className='pb-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-3'>
-              <div className='p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg'>
-                <BarChart3 className='w-5 h-5 text-white' />
+      <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 rounded-2xl">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gray-100 rounded-xl">
+                <BarChart3 className="w-5 h-5 text-gray-600" />
               </div>
               <div>
-                <CardTitle className='text-xl font-bold text-gray-900'>
+                <CardTitle className="text-xl font-thin text-gray-900">
                   Campaign Performance
                 </CardTitle>
-                <p className='text-sm text-gray-600 mt-1'>
+                <p className="text-sm text-gray-500 mt-1 font-medium">
                   Track your marketing metrics over time
                 </p>
               </div>
             </div>
-            <motion.div
-              className='flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-full'
-              whileHover={{ scale: 1.05 }}
-            >
-              <TrendingUp className='w-4 h-4' />
-              <span className='text-sm font-semibold'>+15.3%</span>
-            </motion.div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-200">
+              <TrendingUp className="w-4 h-4" />
+              <span className="text-sm font-medium">+15.3%</span>
+            </div>
           </div>
         </CardHeader>
-        <CardContent className='pt-2'>
-          <div className='h-80'>
-            <ResponsiveContainer width='100%' height='100%'>
-              <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <CardContent className="pt-2">
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={data}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
                 <defs>
-                  <linearGradient id='reachGradient' x1='0' y1='0' x2='0' y2='1'>
-                    <stop offset='5%' stopColor='#667eea' stopOpacity={0.3} />
-                    <stop offset='95%' stopColor='#667eea' stopOpacity={0.05} />
+                  <linearGradient
+                    id="reachGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.02} />
                   </linearGradient>
-                  <linearGradient id='conversionsGradient' x1='0' y1='0' x2='0' y2='1'>
-                    <stop offset='5%' stopColor='#10B981' stopOpacity={0.3} />
-                    <stop offset='95%' stopColor='#10B981' stopOpacity={0.05} />
+                  <linearGradient
+                    id="conversionsGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid
-                  strokeDasharray='3 3'
-                  stroke='#f1f5f9'
-                  strokeOpacity={0.6}
+                  strokeDasharray="3 3"
+                  stroke="#f3f4f6"
+                  strokeOpacity={0.8}
                 />
                 <XAxis
-                  dataKey='name'
-                  className='text-sm text-gray-600'
+                  dataKey="name"
+                  className="text-sm text-gray-600"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: "#6b7280" }}
                 />
                 <YAxis
-                  className='text-sm text-gray-600'
+                  className="text-sm text-gray-600"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: "#6b7280" }}
@@ -117,36 +129,34 @@ export function PerformanceChart({ data }: PerformanceChartProps) {
                   }}
                 />
                 <Area
-                  type='monotone'
-                  dataKey='reach'
-                  stroke='#667eea'
-                  strokeWidth={3}
-                  fill='url(#reachGradient)'
-                  dot={{ fill: "#667eea", strokeWidth: 2, r: 5 }}
+                  type="monotone"
+                  dataKey="reach"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  fill="url(#reachGradient)"
+                  dot={{ fill: "#3b82f6", strokeWidth: 2, r: 4 }}
                   activeDot={{
-                    r: 7,
-                    stroke: "#667eea",
-                    strokeWidth: 3,
+                    r: 6,
+                    stroke: "#3b82f6",
+                    strokeWidth: 2,
                     fill: "white",
-                    style: { filter: "drop-shadow(0 2px 8px rgba(102, 126, 234, 0.3))" },
                   }}
-                  name='Reach'
+                  name="Reach"
                 />
                 <Area
-                  type='monotone'
-                  dataKey='conversions'
-                  stroke='#10B981'
-                  strokeWidth={3}
-                  fill='url(#conversionsGradient)'
-                  dot={{ fill: "#10B981", strokeWidth: 2, r: 5 }}
+                  type="monotone"
+                  dataKey="conversions"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fill="url(#conversionsGradient)"
+                  dot={{ fill: "#10b981", strokeWidth: 2, r: 4 }}
                   activeDot={{
-                    r: 7,
-                    stroke: "#10B981",
-                    strokeWidth: 3,
+                    r: 6,
+                    stroke: "#10b981",
+                    strokeWidth: 2,
                     fill: "white",
-                    style: { filter: "drop-shadow(0 2px 8px rgba(16, 185, 129, 0.3))" },
                   }}
-                  name='Conversions'
+                  name="Conversions"
                 />
               </AreaChart>
             </ResponsiveContainer>
