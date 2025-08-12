@@ -257,7 +257,7 @@ export function Sidebar() {
                     ? "flex items-center justify-center h-11 w-11 rounded-2xl transition-all duration-300 group"
                     : "flex items-center px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 group",
                   isActive
-                    ? "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white shadow-xl shadow-gray-900/25"
+                    ? "bg-gradient-to-r from-[#894DEF] via-[#A66EF2] to-[#B17EF5] text-white shadow-xl shadow-purple-500/25"
                     : "text-gray-600 hover:bg-white/70 hover:backdrop-blur-sm hover:text-gray-900 hover:shadow-lg hover:shadow-gray-200/20"
                 )}
               >
@@ -308,7 +308,7 @@ export function Sidebar() {
                   <div className="relative">
                     <Avatar className="h-10 w-10 ring-2 ring-gray-200/50 shadow-lg shadow-gray-200/20 transition-all duration-300 group-hover:ring-gray-300/60">
                       <AvatarImage src={user.avatar} />
-                      <AvatarFallback className="bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 font-medium text-sm">
+                      <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-medium text-sm">
                         {user.name
                           .split(" ")
                           .map((n) => n[0])
@@ -323,7 +323,7 @@ export function Sidebar() {
                         {user.name}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 shadow-sm">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-[#894DEF]/10 to-[#A66EF2]/10 text-[#894DEF] border border-[#894DEF]/20 shadow-sm">
                           {user.role}
                         </span>
                       </div>
@@ -412,7 +412,7 @@ export function Sidebar() {
                 <div className="relative">
                   <Avatar className="h-20 w-20 ring-4 ring-gray-200/50 shadow-xl shadow-gray-200/20">
                     <AvatarImage src={watch("avatar")} />
-                    <AvatarFallback className="bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 font-semibold text-lg">
+                    <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-semibold text-lg">
                       {user.name
                         .split(" ")
                         .map((n) => n[0])
@@ -560,7 +560,7 @@ export function Sidebar() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 hover:from-gray-800 hover:via-gray-700 hover:to-gray-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl"
+                  className="bg-gradient-to-r from-[#894DEF] via-[#A66EF2] to-[#B17EF5] hover:from-[#7B42E8] hover:via-[#894DEF] hover:to-[#A66EF2] text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl"
                 >
                   {isSubmitting ? "Saving..." : "Save"}
                 </Button>

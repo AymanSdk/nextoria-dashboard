@@ -49,7 +49,7 @@ export function Header() {
             <Bell className="h-5 w-5 text-gray-600" />
             <Badge
               variant="destructive"
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center bg-red-500 border-2 border-white"
+              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center bg-gradient-to-br from-[#894DEF] to-[#A66EF2] border-2 border-white shadow-lg text-white font-semibold"
             >
               3
             </Badge>
@@ -63,7 +63,7 @@ export function Header() {
               >
                 <Avatar className="h-8 w-8 border-2 border-gray-100">
                   <AvatarImage src={profile?.avatar || undefined} />
-                  <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
+                  <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-semibold">
                     {profile?.name
                       ?.split(" ")
                       .map((n) => n[0])
@@ -80,7 +80,7 @@ export function Header() {
               <div className="flex items-center justify-start gap-3 p-3">
                 <Avatar className="h-10 w-10 border-2 border-gray-100">
                   <AvatarImage src={profile?.avatar || undefined} />
-                  <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
+                  <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-semibold">
                     {profile?.name
                       ?.split(" ")
                       .map((n) => n[0])

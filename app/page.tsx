@@ -30,11 +30,11 @@ export default function Dashboard() {
         className="relative mb-8 md:mb-12"
       >
         {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-pink-50/30 rounded-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#894DEF]/5 via-purple-50/10 to-pink-50/20 rounded-3xl"></div>
 
         <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl border border-gray-100/50 shadow-2xl shadow-gray-200/20 overflow-hidden">
           {/* Subtle top border accent */}
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#894DEF] via-[#A66EF2] to-[#B17EF5]"></div>
 
           <div className="p-6 md:p-8 lg:p-10">
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -70,7 +70,7 @@ export default function Dashboard() {
                   <span
                     className={`inline-flex items-center px-4 py-2.5 rounded-full text-sm font-medium shadow-sm ${
                       user.role === "Admin"
-                        ? "bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200/50 shadow-purple-100"
+                        ? "bg-gradient-to-r from-[#894DEF]/10 to-[#A66EF2]/10 text-[#894DEF] border border-[#894DEF]/20 shadow-purple-100"
                         : user.role === "Marketer"
                         ? "bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200/50 shadow-blue-100"
                         : user.role === "Designer"
@@ -81,7 +81,7 @@ export default function Dashboard() {
                     <div
                       className={`w-2 h-2 rounded-full mr-2 ${
                         user.role === "Admin"
-                          ? "bg-purple-400"
+                          ? "bg-[#894DEF]"
                           : user.role === "Marketer"
                           ? "bg-blue-400"
                           : user.role === "Designer"
