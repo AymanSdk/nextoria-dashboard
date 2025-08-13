@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -22,9 +24,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppStore } from "@/lib/store";
 import { Task } from "@/types";
 import { toast } from "sonner";
+import { Clock, Tag, Users, Target, X } from "lucide-react";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -34,6 +38,19 @@ const taskSchema = z.object({
   dueDate: z.string().optional(),
   priority: z.enum(["Low", "Medium", "High", "Urgent"]),
   clientId: z.string().optional(),
+  category: z.enum([
+    "Design",
+    "Development",
+    "Marketing",
+    "Content",
+    "Strategy",
+    "Research",
+    "QA",
+    "Meeting",
+  ]),
+  tags: z.array(z.string()).default([]),
+  estimatedHours: z.number().optional(),
+  watchers: z.array(z.string()).default([]),
 });
 
 type TaskFormData = z.infer<typeof taskSchema>;

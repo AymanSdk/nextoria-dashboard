@@ -91,7 +91,25 @@ export interface Task {
   priority: "Low" | "Medium" | "High" | "Urgent";
   clientId?: string;
   campaignId?: string;
+  category:
+    | "Design"
+    | "Development"
+    | "Marketing"
+    | "Content"
+    | "Strategy"
+    | "Research"
+    | "QA"
+    | "Meeting";
+  tags: string[];
+  estimatedHours?: number;
+  actualHours?: number;
+  dependencies?: string[]; // Task IDs that this task depends on
+  subtasks?: Subtask[];
+  attachments?: Attachment[];
+  timeTracking?: TimeEntry[];
   comments?: Comment[];
+  watchers?: string[]; // User IDs watching this task
+  createdBy: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -102,6 +120,35 @@ export interface Comment {
   authorId: string;
   authorName: string;
   createdAt: Date;
+}
+
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
+  assignedTo?: string;
+  dueDate?: Date;
+  createdAt: Date;
+}
+
+export interface Attachment {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+  uploadedBy: string;
+  uploadedAt: Date;
+}
+
+export interface TimeEntry {
+  id: string;
+  userId: string;
+  userName: string;
+  startTime: Date;
+  endTime: Date;
+  description?: string;
+  hours: number;
 }
 
 export interface Invoice {
