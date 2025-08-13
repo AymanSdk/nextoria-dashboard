@@ -33,7 +33,7 @@ export function DashboardData() {
       id: "1",
       action: "Campaign updated",
       details: "New campaign created successfully",
-      user: "Sarah Marketing",
+      user: "Ayoub El Mandili",
       timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
     },
     {
@@ -47,14 +47,14 @@ export function DashboardData() {
       id: "3",
       action: "Content published",
       details: "Content scheduled for publication",
-      user: "Mike Designer",
+      user: "Karim El Hasnaoui",
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
     },
     {
       id: "4",
       action: "Task completed",
       details: "Task marked as completed",
-      user: "John Admin",
+      user: "Aymane Sadiki",
       timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
     },
   ];
@@ -63,8 +63,8 @@ export function DashboardData() {
     <>
       <StatsCards stats={stats} />
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-        <div className='lg:col-span-2'>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
           <PerformanceChart data={chartData} />
         </div>
         <div>

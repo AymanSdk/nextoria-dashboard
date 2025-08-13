@@ -16,7 +16,12 @@ interface AuthContextType {
   profile: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string, role?: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    name: string,
+    role?: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
 }
@@ -32,48 +37,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const demoUsers: User[] = [
     {
       id: "1",
-      name: "John Admin",
-      email: "demo@nextoria.com",
+      name: "Aymane Sadiki",
+      email: "aymane@nextoria.com",
       role: "Admin",
-      avatar:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100",
+      avatar: "", // Will use initials AS
       createdAt: new Date("2024-01-15"),
     },
     {
       id: "2",
-      name: "Sarah Marketing",
-      email: "sarah@nextoria.com",
-      role: "Marketer",
-      avatar:
-        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100",
+      name: "Marouane Lachhab",
+      email: "marouane@nextoria.com",
+      role: "Developer",
+      avatar: "", // Will use initials ML
       createdAt: new Date("2024-02-01"),
     },
     {
       id: "3",
-      name: "Mike Designer",
-      email: "mike@nextoria.com",
-      role: "Designer",
-      avatar:
-        "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
+      name: "Chaimae Lamrine",
+      email: "chaimae@nextoria.com",
+      role: "Developer",
+      avatar: "", // Will use initials CL
       createdAt: new Date("2024-02-15"),
     },
     {
       id: "4",
-      name: "Alex Developer",
-      email: "alex@nextoria.com",
-      role: "Developer",
-      avatar:
-        "https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=100",
+      name: "Ayoub El Mandili",
+      email: "ayoub@nextoria.com",
+      role: "Marketer",
+      avatar: "", // Will use initials AE
       createdAt: new Date("2024-03-01"),
+    },
+    {
+      id: "5",
+      name: "Karim El Hasnaoui",
+      email: "karim@nextoria.com",
+      role: "Designer",
+      avatar: "", // Will use initials KE
+      createdAt: new Date("2024-03-05"),
     },
   ];
 
   // Demo credentials
   const demoCredentials = [
-    { email: "demo@nextoria.com", password: "demo123" },
-    { email: "sarah@nextoria.com", password: "sarah123" },
-    { email: "mike@nextoria.com", password: "mike123" },
-    { email: "alex@nextoria.com", password: "alex123" },
+    { email: "aymane@nextoria.com", password: "aymane123" },
+    { email: "marouane@nextoria.com", password: "marouane123" },
+    { email: "chaimae@nextoria.com", password: "chaimae123" },
+    { email: "ayoub@nextoria.com", password: "ayoub123" },
+    { email: "karim@nextoria.com", password: "karim123" },
   ];
 
   useEffect(() => {
@@ -145,8 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       name,
       role: role as "Admin" | "Marketer" | "Designer" | "Developer",
-      avatar:
-        "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
+      avatar: "", // Will use initials
       createdAt: new Date(),
     };
 

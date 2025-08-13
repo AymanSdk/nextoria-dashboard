@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User, Client, Campaign, ContentItem, Lead, Task, Invoice } from "@/types";
+import {
+  User,
+  Client,
+  Campaign,
+  ContentItem,
+  Lead,
+  Task,
+  Invoice,
+} from "@/types";
 
 interface AppState {
   // Data
@@ -52,39 +60,43 @@ export const useAppStore = create<AppState>()(
       users: [
         {
           id: "1",
-          name: "John Admin",
-          email: "john@nextoria.com",
+          name: "Aymane Sadiki",
+          email: "aymane@nextoria.com",
           role: "Admin",
-          avatar:
-            "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100",
+          avatar: "", // Will use initials AS
           createdAt: new Date("2024-01-15"),
         },
         {
           id: "2",
-          name: "Sarah Marketing",
-          email: "sarah@nextoria.com",
-          role: "Marketer",
-          avatar:
-            "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100",
+          name: "Marouane Lachhab",
+          email: "marouane@nextoria.com",
+          role: "Developer",
+          avatar: "", // Will use initials ML
           createdAt: new Date("2024-02-01"),
         },
         {
           id: "3",
-          name: "Mike Designer",
-          email: "mike@nextoria.com",
-          role: "Designer",
-          avatar:
-            "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100",
+          name: "Chaimae Lamrine",
+          email: "chaimae@nextoria.com",
+          role: "Developer",
+          avatar: "", // Will use initials CL
           createdAt: new Date("2024-02-15"),
         },
         {
           id: "4",
-          name: "Alex Developer",
-          email: "alex@nextoria.com",
-          role: "Developer",
-          avatar:
-            "https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=100",
+          name: "Ayoub El Mandili",
+          email: "ayoub@nextoria.com",
+          role: "Marketer",
+          avatar: "", // Will use initials AE
           createdAt: new Date("2024-03-01"),
+        },
+        {
+          id: "5",
+          name: "Karim El Hasnaoui",
+          email: "karim@nextoria.com",
+          role: "Designer",
+          avatar: "", // Will use initials KE
+          createdAt: new Date("2024-03-05"),
         },
       ],
       clients: [
@@ -94,7 +106,7 @@ export const useAppStore = create<AppState>()(
           company: "TechStart Inc",
           email: "hello@techstart.com",
           phone: "+1 (555) 123-4567",
-          assignedManager: "Sarah Marketing",
+          assignedManager: "Ayoub El Mandili",
           activeCampaigns: 3,
           notes: "High-growth SaaS startup, focus on B2B marketing",
           logoUrl:
@@ -108,7 +120,7 @@ export const useAppStore = create<AppState>()(
           company: "GreenEarth Solutions",
           email: "contact@greenearth.com",
           phone: "+1 (555) 987-6543",
-          assignedManager: "Sarah Marketing",
+          assignedManager: "Ayoub El Mandili",
           activeCampaigns: 2,
           notes: "Sustainable energy company, eco-conscious messaging",
           logoUrl:
@@ -131,7 +143,7 @@ export const useAppStore = create<AppState>()(
           goals: "Increase B2B leads by 40%",
           reach: 125000,
           conversions: 850,
-          assignedTo: "Sarah Marketing",
+          assignedTo: "Ayoub El Mandili",
           createdAt: new Date("2024-02-25"),
         },
       ],
@@ -140,7 +152,7 @@ export const useAppStore = create<AppState>()(
           id: "1",
           title: "TechStart Product Demo Video",
           type: "Video",
-          assignedTo: "Mike Designer",
+          assignedTo: "Karim El Hasnaoui",
           status: "Draft",
           platform: "YouTube",
           scheduledDate: new Date("2024-03-25"),
@@ -169,7 +181,7 @@ export const useAppStore = create<AppState>()(
           title: "Create TechStart landing page wireframes",
           description: "Design wireframes for new product landing page",
           status: "In Progress",
-          assignedTo: "Mike Designer",
+          assignedTo: "Karim El Hasnaoui",
           dueDate: new Date("2024-03-25"),
           priority: "High",
           clientId: "1",
@@ -230,7 +242,9 @@ export const useAppStore = create<AppState>()(
       updateClient: (id, updates) =>
         set((state) => ({
           clients: state.clients.map((client) =>
-            client.id === id ? { ...client, ...updates, updatedAt: new Date() } : client
+            client.id === id
+              ? { ...client, ...updates, updatedAt: new Date() }
+              : client
           ),
         })),
 
@@ -306,7 +320,9 @@ export const useAppStore = create<AppState>()(
       updateLead: (id, updates) =>
         set((state) => ({
           leads: state.leads.map((lead) =>
-            lead.id === id ? { ...lead, ...updates, updatedAt: new Date() } : lead
+            lead.id === id
+              ? { ...lead, ...updates, updatedAt: new Date() }
+              : lead
           ),
         })),
 
@@ -332,7 +348,9 @@ export const useAppStore = create<AppState>()(
       updateTask: (id, updates) =>
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...updates, updatedAt: new Date() } : task
+            task.id === id
+              ? { ...task, ...updates, updatedAt: new Date() }
+              : task
           ),
         })),
 
@@ -392,12 +410,14 @@ export const useAppStore = create<AppState>()(
               }
               // Handle campaigns
               if (data.state.campaigns) {
-                data.state.campaigns = data.state.campaigns.map((campaign: any) => ({
-                  ...campaign,
-                  startDate: new Date(campaign.startDate),
-                  endDate: new Date(campaign.endDate),
-                  createdAt: new Date(campaign.createdAt),
-                }));
+                data.state.campaigns = data.state.campaigns.map(
+                  (campaign: any) => ({
+                    ...campaign,
+                    startDate: new Date(campaign.startDate),
+                    endDate: new Date(campaign.endDate),
+                    createdAt: new Date(campaign.createdAt),
+                  })
+                );
               }
               // Handle content
               if (data.state.content) {
@@ -426,11 +446,13 @@ export const useAppStore = create<AppState>()(
               }
               // Handle invoices
               if (data.state.invoices) {
-                data.state.invoices = data.state.invoices.map((invoice: any) => ({
-                  ...invoice,
-                  issueDate: new Date(invoice.issueDate),
-                  dueDate: new Date(invoice.dueDate),
-                }));
+                data.state.invoices = data.state.invoices.map(
+                  (invoice: any) => ({
+                    ...invoice,
+                    issueDate: new Date(invoice.issueDate),
+                    dueDate: new Date(invoice.dueDate),
+                  })
+                );
               }
             }
             return JSON.stringify(data);
