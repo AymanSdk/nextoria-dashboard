@@ -74,7 +74,7 @@ export function LoginForm() {
       <div className="w-full max-w-sm">
         {/* Logo and Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-black rounded-2xl mb-6 shadow-lg">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#894DEF] to-[#7C3AED] rounded-2xl mb-6 shadow-lg">
             <Zap className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-3xl font-thin text-gray-900 tracking-tight mb-2">
@@ -105,7 +105,7 @@ export function LoginForm() {
                   type="email"
                   {...loginForm.register("email")}
                   placeholder="Enter your email"
-                  className="h-12 text-base border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-black focus:ring-0 px-0 transition-colors duration-300 placeholder:text-gray-400"
+                  className="h-12 text-base border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-[#894DEF] focus:ring-0 px-0 transition-colors duration-300 placeholder:text-gray-400"
                 />
               </div>
               {loginForm.formState.errors.email && (
@@ -129,7 +129,7 @@ export function LoginForm() {
                   type={showPassword ? "text" : "password"}
                   {...loginForm.register("password")}
                   placeholder="Enter your password"
-                  className="h-12 text-base border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-black focus:ring-0 px-0 pr-10 transition-colors duration-300 placeholder:text-gray-400"
+                  className="h-12 text-base border-0 border-b-2 border-gray-200 rounded-none bg-transparent focus:border-[#894DEF] focus:ring-0 px-0 pr-10 transition-colors duration-300 placeholder:text-gray-400"
                 />
                 <Button
                   type="button"
@@ -158,7 +158,7 @@ export function LoginForm() {
                 id="remember"
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                className="data-[state=checked]:bg-black data-[state=checked]:border-black border-2 border-gray-300 rounded-lg h-4 w-4"
+                className="data-[state=checked]:bg-[#894DEF] data-[state=checked]:border-[#894DEF] border-2 border-gray-300 rounded-lg h-4 w-4"
               />
               <Label
                 htmlFor="remember"
@@ -171,7 +171,7 @@ export function LoginForm() {
             {/* Sign In Button */}
             <Button
               type="submit"
-              className="w-full h-12 bg-black hover:bg-gray-800 text-white text-base font-medium rounded-2xl transition-all duration-200 mt-6 active:scale-95"
+              className="w-full h-12 bg-gradient-to-r from-[#894DEF] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#894DEF] text-white text-base font-medium rounded-2xl transition-all duration-200 mt-6 active:scale-95 shadow-lg"
               disabled={loginForm.formState.isSubmitting}
             >
               {loginForm.formState.isSubmitting ? (
@@ -201,51 +201,60 @@ export function LoginForm() {
           <div className="grid grid-cols-2 gap-2">
             {[
               {
+                name: "Aymane Sadiki",
                 role: "Admin",
                 email: "aymane@nextoria.com",
                 password: "aymane123",
-                color: "bg-slate-100 hover:bg-slate-200 text-slate-700",
+                color:
+                  "bg-gradient-to-br from-[#894DEF]/10 to-[#7C3AED]/10 hover:from-[#894DEF]/20 hover:to-[#7C3AED]/20 text-[#894DEF] border border-[#894DEF]/20",
                 icon: "👤",
               },
               {
+                name: "Ayoub El Mandili",
                 role: "Marketer",
                 email: "ayoub@nextoria.com",
                 password: "ayoub123",
-                color: "bg-blue-50 hover:bg-blue-100 text-blue-700",
+                color:
+                  "bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-blue-700 border border-blue-200",
                 icon: "📊",
               },
               {
+                name: "Karim El Hasnaoui",
                 role: "Designer",
                 email: "karim@nextoria.com",
                 password: "karim123",
-                color: "bg-purple-50 hover:bg-purple-100 text-purple-700",
+                color:
+                  "bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 text-purple-700 border border-purple-200",
                 icon: "🎨",
               },
               {
+                name: "Marouane Lachhab",
                 role: "Developer",
                 email: "marouane@nextoria.com",
                 password: "marouane123",
-                color: "bg-green-50 hover:bg-green-100 text-green-700",
+                color:
+                  "bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 border border-green-200",
                 icon: "💻",
               },
             ].map((account) => (
               <button
-                key={account.role}
+                key={account.name}
                 type="button"
                 onClick={() => {
                   loginForm.setValue("email", account.email);
                   loginForm.setValue("password", account.password);
-                  toast.success(`${account.role} credentials loaded!`);
+                  toast.success(`${account.name}'s credentials loaded!`);
                 }}
                 className={`group relative p-3 rounded-xl transition-all duration-200 active:scale-95 ${account.color}`}
               >
                 <div className="flex flex-col items-center space-y-1">
                   <span className="text-lg">{account.icon}</span>
-                  <span className="text-xs font-medium">{account.role}</span>
+                  <span className="text-xs font-medium">{account.name}</span>
+                  <span className="text-[10px] opacity-60">{account.role}</span>
                 </div>
 
                 {/* Tooltip on hover */}
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-[#894DEF] to-[#7C3AED] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                   Click to auto-fill
                 </div>
               </button>
@@ -254,7 +263,7 @@ export function LoginForm() {
 
           {/* Quick hint */}
           <p className="text-center text-xs text-gray-400 mt-4">
-            Tap any role above to instantly fill login credentials
+            Tap any name above to instantly fill login credentials
           </p>
         </div>
       </div>
