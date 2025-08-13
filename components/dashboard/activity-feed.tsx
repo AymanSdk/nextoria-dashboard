@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Activity, Clock, Users2 } from "lucide-react";
+import Link from "next/link";
 
 interface ActivityItem {
   id: string;
@@ -224,9 +225,11 @@ export function ActivityFeed({ activities, users = [] }: ActivityFeedProps) {
                 ))}
 
                 {/* View All Button */}
-                <button className="w-full mt-6 p-3 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200">
-                  View all activity
-                </button>
+                <Link href="/activities">
+                  <button className="w-full mt-6 p-3 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200">
+                    View all activity
+                  </button>
+                </Link>
               </>
             )}
           </motion.div>
