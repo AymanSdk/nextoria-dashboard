@@ -14,9 +14,10 @@ interface ActivityItem {
 
 interface ActivityFeedProps {
   activities: ActivityItem[];
+  users?: Array<{ id: string; name: string; avatar?: string }>;
 }
 
-export function ActivityFeed({ activities }: ActivityFeedProps) {
+export function ActivityFeed({ activities, users = [] }: ActivityFeedProps) {
   const formatTime = (timestamp: Date) => {
     const now = new Date();
     const diff = now.getTime() - timestamp.getTime();
@@ -36,6 +37,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   const getActionBadge = (action: string) => {
     switch (action) {
       case "Campaign updated":
+      case "Campaign created":
         return (
           <Badge className="bg-purple-50 text-purple-600 border border-purple-200 font-medium">
             Campaign
@@ -48,15 +50,24 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
           </Badge>
         );
       case "Content published":
+      case "Content scheduled":
+      case "Content created":
         return (
           <Badge className="bg-blue-50 text-blue-600 border border-blue-200 font-medium">
             Content
           </Badge>
         );
       case "Task completed":
+      case "Task updated":
         return (
           <Badge className="bg-orange-50 text-orange-600 border border-orange-200 font-medium">
             Task
+          </Badge>
+        );
+      case "New client":
+        return (
+          <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-200 font-medium">
+            Client
           </Badge>
         );
       default:
@@ -71,13 +82,19 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   const getActivityIcon = (action: string) => {
     switch (action) {
       case "Campaign updated":
+      case "Campaign created":
         return "🎯";
       case "New lead":
         return "🌟";
       case "Content published":
+      case "Content scheduled":
+      case "Content created":
         return "📝";
       case "Task completed":
+      case "Task updated":
         return "✅";
+      case "New client":
+        return "🏢";
       default:
         return "📋";
     }
@@ -141,60 +158,77 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             animate="visible"
             className="space-y-4"
           >
-            {activities.map((activity, index) => (
-              <motion.div
-                key={activity.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="flex items-start space-x-4 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
-                  <div className="relative">
-                    <Avatar className="h-10 w-10 border-2 border-gray-100">
-                      <AvatarImage
-                        src={`https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100`}
-                      />
-                      <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
-                        {activity.user
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute -bottom-1 -right-1 text-sm">
-                      {getActivityIcon(activity.action)}
-                    </div>
-                  </div>
+            {activities.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-gray-400 text-4xl mb-4">🔔</div>
+                <p className="text-gray-500 text-sm">
+                  No recent activity to show
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  Activity will appear here as your team works
+                </p>
+              </div>
+            ) : (
+              <>
+                {activities.map((activity, index) => (
+                  <motion.div
+                    key={activity.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group"
+                  >
+                    <div className="flex items-start space-x-4 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200">
+                      <div className="relative">
+                        <Avatar className="h-10 w-10 border-2 border-gray-100">
+                          <AvatarImage
+                            src={
+                              users.find((u) => u.name === activity.user)
+                                ?.avatar || undefined
+                            }
+                          />
+                          <AvatarFallback className="bg-gray-100 text-gray-600 font-medium">
+                            {activity.user
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="absolute -bottom-1 -right-1 text-sm">
+                          {getActivityIcon(activity.action)}
+                        </div>
+                      </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      {getActionBadge(activity.action)}
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        <span className="text-xs font-medium">
-                          {formatTime(activity.timestamp)}
-                        </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          {getActionBadge(activity.action)}
+                          <div className="flex items-center gap-1 text-gray-500">
+                            <Clock className="w-3 h-3" />
+                            <span className="text-xs font-medium">
+                              {formatTime(activity.timestamp)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-sm text-gray-900 font-medium group-hover:text-gray-700 transition-colors mb-1">
+                          {activity.details}
+                        </p>
+
+                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                          <Users2 className="w-3 h-3" />
+                          <span>by {activity.user}</span>
+                        </div>
                       </div>
                     </div>
+                  </motion.div>
+                ))}
 
-                    <p className="text-sm text-gray-900 font-medium group-hover:text-gray-700 transition-colors mb-1">
-                      {activity.details}
-                    </p>
-
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Users2 className="w-3 h-3" />
-                      <span>by {activity.user}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-
-            {/* View All Button */}
-            <button className="w-full mt-6 p-3 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200">
-              View all activity
-            </button>
+                {/* View All Button */}
+                <button className="w-full mt-6 p-3 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200">
+                  View all activity
+                </button>
+              </>
+            )}
           </motion.div>
         </CardContent>
       </Card>
