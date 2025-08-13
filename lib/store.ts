@@ -20,6 +20,11 @@ interface AppState {
   tasks: Task[];
   invoices: Invoice[];
 
+  // User actions
+  addUser: (user: Omit<User, "id" | "createdAt">) => void;
+  updateUser: (id: string, updates: Partial<User>) => void;
+  removeUser: (id: string) => void;
+
   // Client actions
   addClient: (client: Omit<Client, "id" | "createdAt" | "updatedAt">) => void;
   updateClient: (id: string, updates: Partial<Client>) => void;
@@ -224,6 +229,31 @@ export const useAppStore = create<AppState>()(
           notes: "Payment received on time. Great client to work with.",
         },
       ],
+
+      // User actions
+      addUser: (userData) =>
+        set((state) => ({
+          users: [
+            ...state.users,
+            {
+              ...userData,
+              id: generateId(),
+              createdAt: new Date(),
+            },
+          ],
+        })),
+
+      updateUser: (id, updates) =>
+        set((state) => ({
+          users: state.users.map((user) =>
+            user.id === id ? { ...user, ...updates } : user
+          ),
+        })),
+
+      removeUser: (id) =>
+        set((state) => ({
+          users: state.users.filter((user) => user.id !== id),
+        })),
 
       // Client actions
       addClient: (clientData) =>

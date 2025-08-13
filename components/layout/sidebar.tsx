@@ -17,6 +17,12 @@ import {
   Zap,
   Settings,
   LogOut,
+  Plus,
+  Trash2,
+  Edit,
+  Shield,
+  Crown,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -119,10 +125,12 @@ const baseNavigation = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [teamOpen, setTeamOpen] = useState(false);
   const pathname = usePathname();
   const { user, profile, updateProfile, signOut } = useAuth();
   const tasks = useAppStore((s) => s.tasks);
   const campaigns = useAppStore((s) => s.campaigns);
+  const { users, addUser, updateUser, removeUser } = useAppStore();
 
   // Define profile schema and form hook before early return
   const profileSchema = z.object({
@@ -130,9 +138,18 @@ export function Sidebar() {
     email: z.string().email("Invalid email"),
     role: z.enum(["Admin", "Marketer", "Designer", "Developer"]),
     isAdmin: z.boolean(),
-    avatar: z.string().url("Must be a valid URL"),
+    avatar: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   });
   type ProfileFormData = z.infer<typeof profileSchema>;
+
+  // Team management schema
+  const teamMemberSchema = z.object({
+    name: z.string().min(2, "Name required"),
+    email: z.string().email("Invalid email"),
+    role: z.enum(["Admin", "Marketer", "Designer", "Developer"]),
+    avatar: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  });
+  type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
 
   const {
     register,
@@ -159,6 +176,26 @@ export function Sidebar() {
           avatar: "",
         },
   });
+
+  // Team management form
+  const {
+    register: registerTeam,
+    handleSubmit: handleTeamSubmit,
+    setValue: setTeamValue,
+    watch: watchTeam,
+    formState: { errors: teamErrors, isSubmitting: isTeamSubmitting },
+    reset: resetTeam,
+  } = useForm<TeamMemberFormData>({
+    resolver: zodResolver(teamMemberSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      role: "Marketer",
+      avatar: "",
+    },
+  });
+
+  const [editingUser, setEditingUser] = useState<string | null>(null);
 
   if (!user) return null;
 
@@ -200,6 +237,89 @@ export function Sidebar() {
       toast.success("Signed out successfully");
     } catch (error) {
       toast.error("Failed to sign out");
+    }
+  };
+
+  // Team management handlers
+  const handleAddUser = async (data: TeamMemberFormData) => {
+    try {
+      addUser({
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar || "",
+      });
+      toast.success("Team member added successfully");
+      resetTeam();
+    } catch (error) {
+      toast.error("Failed to add team member");
+    }
+  };
+
+  const handleUpdateUser = async (data: TeamMemberFormData) => {
+    if (!editingUser) return;
+    try {
+      updateUser(editingUser, {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar || "",
+      });
+      toast.success("Team member updated successfully");
+      setEditingUser(null);
+      resetTeam();
+    } catch (error) {
+      toast.error("Failed to update team member");
+    }
+  };
+
+  const handleRemoveUser = async (userId: string) => {
+    try {
+      removeUser(userId);
+      toast.success("Team member removed successfully");
+    } catch (error) {
+      toast.error("Failed to remove team member");
+    }
+  };
+
+  const startEditingUser = (userId: string) => {
+    const userToEdit = users.find((u) => u.id === userId);
+    if (userToEdit) {
+      setEditingUser(userId);
+      setTeamValue("name", userToEdit.name);
+      setTeamValue("email", userToEdit.email);
+      setTeamValue("role", userToEdit.role);
+      setTeamValue("avatar", userToEdit.avatar || "");
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return <Crown className="h-4 w-4 text-red-500" />;
+      case "Marketer":
+        return <Target className="h-4 w-4 text-purple-500" />;
+      case "Designer":
+        return <Zap className="h-4 w-4 text-blue-500" />;
+      case "Developer":
+        return <User className="h-4 w-4 text-green-500" />;
+      default:
+        return <User className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "Marketer":
+        return "bg-purple-100 text-purple-700 border-purple-200";
+      case "Designer":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "Developer":
+        return "bg-green-100 text-green-700 border-green-200";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
@@ -391,9 +511,12 @@ export function Sidebar() {
                   Profile Settings
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className="rounded-md cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => setTeamOpen(true)}
+                  className="rounded-md cursor-pointer"
+                >
                   <Users className="h-4 w-4 mr-2" />
-                  Team
+                  Team Management
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator className="my-1" />
@@ -652,6 +775,306 @@ export function Sidebar() {
                 </Button>
               </div>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Team Management Dialog */}
+        <Dialog open={teamOpen} onOpenChange={setTeamOpen}>
+          <DialogContent className="max-w-4xl bg-white/95 backdrop-blur-xl border-0 shadow-2xl rounded-3xl overflow-hidden max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="relative bg-gradient-to-br from-[#894DEF] via-[#A66EF2] to-[#B17EF5] p-8 -m-6 mb-6">
+              <div className="absolute inset-0 bg-black/10"></div>
+              <div className="relative">
+                <DialogHeader className="text-center">
+                  <DialogTitle className="text-2xl font-bold text-white mb-2 tracking-tight">
+                    Team Management
+                  </DialogTitle>
+                  <DialogDescription className="text-white/90 font-medium">
+                    {user.role === "Admin"
+                      ? "Manage your team members and their roles"
+                      : "View team members and their information"}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="flex justify-center mt-4">
+                  <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                    <Users className="w-5 h-5 text-white mr-2" />
+                    <span className="text-white font-medium">
+                      {users.length} Team Members
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Add New Member Form (Admin Only) */}
+              {user.role === "Admin" && (
+                <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200/50">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <Plus className="h-5 w-5 mr-2 text-[#894DEF]" />
+                    {editingUser ? "Edit Team Member" : "Add New Team Member"}
+                  </h3>
+
+                  <form
+                    onSubmit={handleTeamSubmit(
+                      editingUser ? handleUpdateUser : handleAddUser
+                    )}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="team-name"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          Full Name
+                        </Label>
+                        <Input
+                          id="team-name"
+                          {...registerTeam("name")}
+                          className="rounded-xl border-gray-200 focus:border-[#894DEF] focus:ring-[#894DEF]/20 transition-all duration-300"
+                          placeholder="Enter full name"
+                        />
+                        {teamErrors.name && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                            {teamErrors.name.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="team-email"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          Email Address
+                        </Label>
+                        <Input
+                          id="team-email"
+                          type="email"
+                          {...registerTeam("email")}
+                          className="rounded-xl border-gray-200 focus:border-[#894DEF] focus:ring-[#894DEF]/20 transition-all duration-300"
+                          placeholder="Enter email address"
+                        />
+                        {teamErrors.email && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                            {teamErrors.email.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="team-role"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          Role
+                        </Label>
+                        <Select
+                          value={watchTeam("role")}
+                          onValueChange={(v) => setTeamValue("role", v as any)}
+                        >
+                          <SelectTrigger className="rounded-xl border-gray-200 focus:border-[#894DEF] focus:ring-[#894DEF]/20 transition-all duration-300">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl">
+                            <SelectItem value="Admin">
+                              <div className="flex items-center space-x-2">
+                                <Crown className="h-4 w-4 text-red-500" />
+                                <span>Admin</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Marketer">
+                              <div className="flex items-center space-x-2">
+                                <Target className="h-4 w-4 text-purple-500" />
+                                <span>Marketer</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Designer">
+                              <div className="flex items-center space-x-2">
+                                <Zap className="h-4 w-4 text-blue-500" />
+                                <span>Designer</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Developer">
+                              <div className="flex items-center space-x-2">
+                                <User className="h-4 w-4 text-green-500" />
+                                <span>Developer</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {teamErrors.role && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                            {teamErrors.role.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="team-avatar"
+                          className="text-sm font-medium text-gray-700"
+                        >
+                          Avatar URL (Optional)
+                        </Label>
+                        <Input
+                          id="team-avatar"
+                          {...registerTeam("avatar")}
+                          className="rounded-xl border-gray-200 focus:border-[#894DEF] focus:ring-[#894DEF]/20 transition-all duration-300"
+                          placeholder="https://example.com/avatar.jpg"
+                        />
+                        {teamErrors.avatar && (
+                          <p className="text-xs text-red-500 flex items-center gap-1">
+                            <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                            {teamErrors.avatar.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3">
+                      {editingUser && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingUser(null);
+                            resetTeam();
+                          }}
+                          className="rounded-xl"
+                        >
+                          Cancel Edit
+                        </Button>
+                      )}
+                      <Button
+                        type="submit"
+                        disabled={isTeamSubmitting}
+                        className="bg-gradient-to-r from-[#894DEF] to-[#A66EF2] hover:from-[#7B42E8] hover:to-[#894DEF] text-white rounded-xl px-6"
+                      >
+                        {isTeamSubmitting ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <span>
+                              {editingUser ? "Updating..." : "Adding..."}
+                            </span>
+                          </div>
+                        ) : editingUser ? (
+                          "Update Member"
+                        ) : (
+                          "Add Member"
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Team Members List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-[#894DEF]" />
+                  Team Members
+                </h3>
+
+                <div className="grid gap-4">
+                  {users.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200/50 hover:shadow-md transition-all duration-300"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-12 w-12 ring-2 ring-gray-200/50">
+                          <AvatarImage src={member.avatar} />
+                          <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-medium">
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h4 className="font-semibold text-gray-900">
+                              {member.name}
+                            </h4>
+                            {member.id === user.id && (
+                              <span className="px-2 py-1 text-xs font-medium bg-[#894DEF]/10 text-[#894DEF] rounded-full border border-[#894DEF]/20">
+                                You
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {member.email}
+                          </p>
+                          <div className="flex items-center space-x-2 mt-2">
+                            <span
+                              className={cn(
+                                "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border",
+                                getRoleColor(member.role)
+                              )}
+                            >
+                              {getRoleIcon(member.role)}
+                              <span className="ml-1">{member.role}</span>
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              Member since{" "}
+                              {new Date(member.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions (Admin only, can't edit themselves) */}
+                      {user.role === "Admin" && member.id !== user.id && (
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => startEditingUser(member.id)}
+                            className="rounded-lg hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRemoveUser(member.id)}
+                            className="rounded-lg hover:bg-red-50 hover:border-red-300 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* View only indicator for non-admins */}
+                      {user.role !== "Admin" && (
+                        <div className="text-xs text-gray-400 italic">
+                          View Only
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <div className="flex justify-end pt-4 border-t border-gray-100">
+                <DialogClose asChild>
+                  <Button
+                    variant="outline"
+                    className="rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 px-6"
+                  >
+                    Close
+                  </Button>
+                </DialogClose>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
