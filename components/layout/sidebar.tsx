@@ -298,15 +298,15 @@ export function Sidebar() {
             <DropdownMenuTrigger asChild>
               <div
                 className={cn(
-                  "cursor-pointer hover:bg-white/50 hover:backdrop-blur-sm rounded-2xl transition-all duration-300 p-3 group",
+                  "cursor-pointer hover:bg-gray-50 rounded-xl transition-all duration-200 p-3 group",
                   collapsed
                     ? "flex items-center justify-center"
-                    : "flex items-center justify-between"
+                    : "flex items-center space-x-3 w-full"
                 )}
               >
-                <div className="flex items-center space-x-3">
+                {collapsed ? (
                   <div className="relative">
-                    <Avatar className="h-10 w-10 ring-2 ring-gray-200/50 shadow-lg shadow-gray-200/20 transition-all duration-300 group-hover:ring-gray-300/60">
+                    <Avatar className="h-9 w-9 ring-1 ring-gray-200 shadow-sm">
                       <AvatarImage src={user.avatar} />
                       <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-medium text-sm">
                         {user.name
@@ -315,254 +315,252 @@ export function Sidebar() {
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
                   </div>
-                  {!collapsed && (
+                ) : (
+                  <>
+                    <div className="relative">
+                      <Avatar className="h-10 w-10 ring-1 ring-gray-200 shadow-sm">
+                        <AvatarImage src={user.avatar} />
+                        <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-medium">
+                          {user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate tracking-tight">
+                      <p className="text-sm font-medium text-gray-900 truncate">
                         {user.name}
                       </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-[#894DEF]/10 to-[#A66EF2]/10 text-[#894DEF] border border-[#894DEF]/20 shadow-sm">
-                          {user.role}
-                        </span>
-                      </div>
+                      <p className="text-xs text-gray-500 truncate">
+                        {user.role}
+                      </p>
                     </div>
-                  )}
-                </div>
-                {!collapsed && (
-                  <div className="flex items-center space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 hover:bg-white/70 hover:backdrop-blur-sm rounded-xl transition-all duration-200"
-                    >
-                      <Settings className="h-4 w-4 text-gray-500" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-gray-500 hover:text-red-600 hover:bg-red-50/70 hover:backdrop-blur-sm rounded-xl transition-all duration-200"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="h-4 w-4" />
-                    </Button>
-                  </div>
+                    <Settings className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </>
                 )}
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align={collapsed ? "center" : "end"}
-              className="w-56 backdrop-blur-xl bg-white/95 border border-gray-100/50 shadow-xl rounded-2xl"
+              side="top"
+              className="w-56 bg-white border border-gray-200 shadow-lg rounded-lg mb-2"
             >
-              <DropdownMenuLabel className="flex flex-col items-start">
-                <span className="font-semibold text-gray-900">{user.name}</span>
-                <span className="text-xs text-gray-500 font-light">
-                  {user.email}
-                </span>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-gray-100/50" />
-              <DropdownMenuItem
-                onSelect={() => setProfileOpen(true)}
-                className="rounded-xl mx-1 transition-colors duration-200"
-              >
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-xl mx-1 transition-colors duration-200">
-                Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-100/50" />
-              <DropdownMenuItem
-                className="text-red-600 rounded-xl mx-1 transition-colors duration-200"
-                onClick={handleSignOut}
-              >
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DialogContent className="max-w-lg backdrop-blur-xl bg-white/95 border border-gray-100/50 shadow-2xl rounded-3xl">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-gray-900 tracking-tight">
-                Profile
-              </DialogTitle>
-              <DialogDescription className="text-gray-600 font-light">
-                Edit your profile and view your stats.
-              </DialogDescription>
-              <div
-                className={`p-4 rounded-2xl border border-gray-100/50 bg-gradient-to-br from-gray-50/50 to-white/50 backdrop-blur-sm shadow-sm`}
-                style={{
-                  borderLeftColor: userRoleConfig.color,
-                  borderLeftWidth: "4px",
-                }}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium ${userRoleConfig.badge} shadow-sm`}
-                  >
-                    {user.role}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 font-light leading-relaxed">
-                  {userRoleConfig.description}
-                </p>
-              </div>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <Avatar className="h-20 w-20 ring-4 ring-gray-200/50 shadow-xl shadow-gray-200/20">
-                    <AvatarImage src={watch("avatar")} />
-                    <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-semibold text-lg">
+              <DropdownMenuLabel className="p-3">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user.avatar} />
+                    <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-medium">
                       {user.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full border-3 border-white shadow-lg" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-900 truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-sm text-gray-500 truncate">
+                      {user.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="name"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Name
-                    </Label>
-                    <Input
-                      id="name"
-                      {...register("name")}
-                      className="rounded-xl border-gray-200/50 focus:border-gray-300 focus:ring-gray-200 backdrop-blur-sm bg-white/80"
-                    />
-                    {errors.name && (
-                      <p className="text-xs text-red-600 font-light">
-                        {errors.name.message}
-                      </p>
-                    )}
+              </DropdownMenuLabel>
+
+              <DropdownMenuSeparator />
+
+              <div className="p-2">
+                <DropdownMenuItem
+                  onSelect={() => setProfileOpen(true)}
+                  className="rounded-md cursor-pointer"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Profile Settings
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="rounded-md cursor-pointer">
+                  <Users className="h-4 w-4 mr-2" />
+                  Team
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="my-1" />
+
+                <DropdownMenuItem
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md cursor-pointer"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent className="max-w-lg bg-white border border-gray-200 shadow-xl rounded-lg">
+            <DialogHeader className="pb-4">
+              <DialogTitle className="text-xl font-semibold text-gray-900">
+                Profile Settings
+              </DialogTitle>
+              <DialogDescription className="text-gray-600">
+                Manage your account settings and preferences.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Profile Picture */}
+              <div className="flex flex-col items-center gap-4">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={watch("avatar")} />
+                  <AvatarFallback className="bg-gradient-to-br from-[#894DEF] to-[#A66EF2] text-white font-semibold text-lg">
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="text-center">
+                  <p className="font-medium text-gray-900">{user.name}</p>
+                  <span className="inline-flex items-center px-2 py-1 mt-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                    {user.role}
+                  </span>
+                </div>
+              </div>
+
+              {/* Form Fields */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    {...register("name")}
+                    className="rounded-md"
+                  />
+                  {errors.name && (
+                    <p className="text-xs text-red-600">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register("email")}
+                    className="rounded-md"
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="role"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Role
+                  </Label>
+                  <Select
+                    value={watch("role")}
+                    onValueChange={(v) => setValue("role", v as any)}
+                  >
+                    <SelectTrigger className="rounded-md">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Admin">Admin</SelectItem>
+                      <SelectItem value="Marketer">Marketer</SelectItem>
+                      <SelectItem value="Designer">Designer</SelectItem>
+                      <SelectItem value="Developer">Developer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.role && (
+                    <p className="text-xs text-red-600">
+                      {errors.role.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="avatar"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Avatar URL
+                  </Label>
+                  <Input
+                    id="avatar"
+                    {...register("avatar")}
+                    className="rounded-md"
+                    placeholder="https://example.com/avatar.jpg"
+                  />
+                  {errors.avatar && (
+                    <p className="text-xs text-red-600">
+                      {errors.avatar.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="border-t pt-4">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900">
+                      {totalTasks}
+                    </div>
+                    <div className="text-xs text-gray-500">Total Tasks</div>
                   </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="email"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      {...register("email")}
-                      className="rounded-xl border-gray-200/50 focus:border-gray-300 focus:ring-gray-200 backdrop-blur-sm bg-white/80"
-                    />
-                    {errors.email && (
-                      <p className="text-xs text-red-600 font-light">
-                        {errors.email.message}
-                      </p>
-                    )}
+                  <div>
+                    <div className="text-lg font-semibold text-green-600">
+                      {completedTasks}
+                    </div>
+                    <div className="text-xs text-gray-500">Completed</div>
                   </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="role"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Role
-                    </Label>
-                    <Select
-                      value={watch("role")}
-                      onValueChange={(v) => setValue("role", v as any)}
-                    >
-                      <SelectTrigger className="rounded-xl border-gray-200/50 focus:border-gray-300 focus:ring-gray-200 backdrop-blur-sm bg-white/80">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="backdrop-blur-xl bg-white/95 border border-gray-100/50 shadow-xl rounded-xl">
-                        <SelectItem value="Admin">Admin</SelectItem>
-                        <SelectItem value="Marketer">Marketer</SelectItem>
-                        <SelectItem value="Designer">Designer</SelectItem>
-                        <SelectItem value="Developer">Developer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.role && (
-                      <p className="text-xs text-red-600 font-light">
-                        {errors.role.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="avatar"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Avatar URL
-                    </Label>
-                    <Input
-                      id="avatar"
-                      {...register("avatar")}
-                      className="rounded-xl border-gray-200/50 focus:border-gray-300 focus:ring-gray-200 backdrop-blur-sm bg-white/80"
-                    />
-                    {errors.avatar && (
-                      <p className="text-xs text-red-600 font-light">
-                        {errors.avatar.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2 flex items-center justify-between">
-                    <Label
-                      htmlFor="isAdmin"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Admin
-                    </Label>
-                    <Switch
-                      id="isAdmin"
-                      checked={watch("role") === "Admin"}
-                      onCheckedChange={(checked) =>
-                        setValue("role", checked ? "Admin" : "Marketer")
-                      }
-                    />
+                  <div>
+                    <div className="text-lg font-semibold text-purple-600">
+                      {assignedCampaigns}
+                    </div>
+                    <div className="text-xs text-gray-500">Campaigns</div>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4 text-center border-t border-gray-100/50 pt-6">
-                <div className="space-y-1">
-                  <div className="text-2xl font-extralight text-gray-900 tracking-tight">
-                    {completedTasks}
-                  </div>
-                  <div className="text-xs text-gray-500 font-light">
-                    Completed Tasks
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-extralight text-gray-900 tracking-tight">
-                    {totalTasks}
-                  </div>
-                  <div className="text-xs text-gray-500 font-light">
-                    Total Tasks
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-2xl font-extralight text-gray-900 tracking-tight">
-                    {assignedCampaigns}
-                  </div>
-                  <div className="text-xs text-gray-500 font-light">
-                    Campaigns
-                  </div>
-                </div>
-              </div>
+
+              {/* Actions */}
               <div className="flex justify-end gap-3 pt-4">
                 <DialogClose asChild>
                   <Button
                     type="button"
                     variant="outline"
-                    className="rounded-xl border-gray-200/50 text-gray-700 hover:bg-gray-50/50 backdrop-blur-sm"
+                    className="rounded-md"
                   >
-                    Close
+                    Cancel
                   </Button>
                 </DialogClose>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-[#894DEF] via-[#A66EF2] to-[#B17EF5] hover:from-[#7B42E8] hover:via-[#894DEF] hover:to-[#A66EF2] text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl"
+                  className="bg-[#894DEF] hover:bg-[#7B42E8] text-white rounded-md"
                 >
-                  {isSubmitting ? "Saving..." : "Save"}
+                  {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </form>
