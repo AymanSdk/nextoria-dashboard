@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { useAppStore } from '@/lib/store';
-import { Task } from '@/types';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import { useAppStore } from "@/lib/store";
+import { Task } from "@/types";
+import { toast } from "sonner";
 
 const taskSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
-  status: z.enum(['Todo', 'In Progress', 'Review', 'Done']),
-  assignedTo: z.string().min(1, 'Assigned to is required'),
+  status: z.enum(["Todo", "In Progress", "Review", "Done"]),
+  assignedTo: z.string().min(1, "Assigned to is required"),
   dueDate: z.string().optional(),
-  priority: z.enum(['Low', 'Medium', 'High', 'Urgent']),
+  priority: z.enum(["Low", "Medium", "High", "Urgent"]),
   clientId: z.string().optional(),
 });
 
@@ -56,24 +56,27 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
-    defaultValues: task ? {
-      title: task.title,
-      description: task.description || '',
-      status: task.status,
-      assignedTo: task.assignedTo,
-      dueDate: task.dueDate ? task.dueDate.toISOString().split('T')[0] : '',
-      priority: task.priority,
-      clientId: task.clientId || '',
-    } : {
-      status: 'Todo',
-      priority: 'Medium',
-    },
+    defaultValues: task
+      ? {
+          title: task.title,
+          description: task.description || "",
+          status: task.status,
+          assignedTo: task.assignedTo,
+          dueDate: task.dueDate ? task.dueDate.toISOString().split("T")[0] : "",
+          priority: task.priority,
+          clientId: task.clientId || "none",
+        }
+      : {
+          status: "Todo",
+          priority: "Medium",
+          clientId: "none",
+        },
   });
 
-  const status = watch('status');
-  const priority = watch('priority');
-  const assignedTo = watch('assignedTo');
-  const clientId = watch('clientId');
+  const status = watch("status") || "Todo";
+  const priority = watch("priority") || "Medium";
+  const assignedTo = watch("assignedTo");
+  const clientId = watch("clientId") || "none";
 
   const onSubmit = async (data: TaskFormData) => {
     try {
@@ -81,40 +84,41 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
         ...data,
         description: data.description || undefined,
         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-        clientId: data.clientId || undefined,
+        clientId:
+          data.clientId === "none" ? undefined : data.clientId || undefined,
       };
 
       if (task) {
         updateTask(task.id, taskData);
-        toast.success('Task updated successfully');
+        toast.success("Task updated successfully");
       } else {
         addTask(taskData);
-        toast.success('Task created successfully');
+        toast.success("Task created successfully");
       }
       setOpen(false);
-      reset();
+      reset({
+        status: "Todo",
+        priority: "Medium",
+        clientId: "none",
+      });
     } catch (error) {
-      toast.error('Something went wrong');
+      toast.error("Something went wrong");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {task ? 'Edit Task' : 'Add New Task'}
-          </DialogTitle>
+          <DialogTitle>{task ? "Edit Task" : "Add New Task"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              {...register('title')}
+              {...register("title")}
               placeholder="Create landing page wireframes"
             />
             {errors.title && (
@@ -126,7 +130,7 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              {...register('description')}
+              {...register("description")}
               placeholder="Detailed description of the task..."
               rows={3}
             />
@@ -137,7 +141,7 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
               <Label htmlFor="status">Status</Label>
               <Select
                 value={status}
-                onValueChange={(value) => setValue('status', value as any)}
+                onValueChange={(value) => setValue("status", value as any)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -158,7 +162,7 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={priority}
-                onValueChange={(value) => setValue('priority', value as any)}
+                onValueChange={(value) => setValue("priority", value as any)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select priority" />
@@ -171,7 +175,9 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
                 </SelectContent>
               </Select>
               {errors.priority && (
-                <p className="text-sm text-red-600">{errors.priority.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.priority.message}
+                </p>
               )}
             </div>
           </div>
@@ -181,7 +187,7 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
               <Label htmlFor="assignedTo">Assigned To</Label>
               <Select
                 value={assignedTo}
-                onValueChange={(value) => setValue('assignedTo', value)}
+                onValueChange={(value) => setValue("assignedTo", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select team member" />
@@ -195,17 +201,15 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
                 </SelectContent>
               </Select>
               {errors.assignedTo && (
-                <p className="text-sm text-red-600">{errors.assignedTo.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.assignedTo.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date (Optional)</Label>
-              <Input
-                id="dueDate"
-                type="date"
-                {...register('dueDate')}
-              />
+              <Input id="dueDate" type="date" {...register("dueDate")} />
             </div>
           </div>
 
@@ -213,13 +217,13 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
             <Label htmlFor="clientId">Client (Optional)</Label>
             <Select
               value={clientId}
-              onValueChange={(value) => setValue('clientId', value)}
+              onValueChange={(value) => setValue("clientId", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select client" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No client</SelectItem>
+                <SelectItem value="none">No client</SelectItem>
                 {clients.map((client) => (
                   <SelectItem key={client.id} value={client.id}>
                     {client.name}
@@ -242,7 +246,11 @@ export function TaskForm({ task, trigger }: TaskFormProps) {
               disabled={isSubmitting}
               className="bg-[#894DEF] hover:bg-[#894DEF]/90"
             >
-              {isSubmitting ? 'Saving...' : task ? 'Update Task' : 'Create Task'}
+              {isSubmitting
+                ? "Saving..."
+                : task
+                ? "Update Task"
+                : "Create Task"}
             </Button>
           </div>
         </form>

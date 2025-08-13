@@ -255,7 +255,7 @@ export default function LeadsPage() {
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-32 bg-white/80 backdrop-blur-sm border-gray-200/50">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue />
+              <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
