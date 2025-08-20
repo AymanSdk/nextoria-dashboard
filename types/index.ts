@@ -27,6 +27,27 @@ export interface Client {
   activeCampaigns: number;
   notes?: string;
   logoUrl?: string;
+  // Enhanced fields
+  website?: string;
+  industry?:
+    | "Technology"
+    | "Healthcare"
+    | "Finance"
+    | "Education"
+    | "Retail"
+    | "Manufacturing"
+    | "Consulting"
+    | "Real Estate"
+    | "Media"
+    | "Other";
+  companySize?:
+    | "Startup (1-10)"
+    | "Small (11-50)"
+    | "Medium (51-200)"
+    | "Large (201-1000)"
+    | "Enterprise (1000+)";
+  priority?: "Low" | "Medium" | "High" | "VIP";
+  address?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -185,4 +206,53 @@ export interface ChartData {
   value: number;
   reach?: number;
   conversions?: number;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  clientId?: string;
+  clientName?: string;
+  status: "Planning" | "Active" | "On Hold" | "Completed" | "Cancelled";
+  priority: "Low" | "Medium" | "High" | "Critical";
+  startDate: Date;
+  endDate?: Date;
+  budget?: number;
+  progress: number; // 0-100
+  assignedTeam: string[]; // User IDs
+  projectManager: string; // User ID
+  tags: string[];
+  category:
+    | "Web Development"
+    | "Mobile App"
+    | "Marketing Campaign"
+    | "Design"
+    | "Consulting"
+    | "Other";
+  milestones?: Milestone[];
+  documents?: ProjectDocument[];
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Milestone {
+  id: string;
+  title: string;
+  description?: string;
+  dueDate: Date;
+  completed: boolean;
+  completedAt?: Date;
+  assignedTo?: string;
+}
+
+export interface ProjectDocument {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+  uploadedBy: string;
+  uploadedAt: Date;
 }

@@ -8,11 +8,13 @@ import {
   Lead,
   Task,
   Invoice,
+  Project,
 } from "@/types";
 
 interface AppState {
   // Data
   users: User[];
+  projects: Project[];
   clients: Client[];
   campaigns: Campaign[];
   content: ContentItem[];
@@ -24,6 +26,13 @@ interface AppState {
   addUser: (user: Omit<User, "id" | "createdAt">) => void;
   updateUser: (id: string, updates: Partial<User>) => void;
   removeUser: (id: string) => void;
+
+  // Project actions
+  addProject: (
+    project: Omit<Project, "id" | "createdAt" | "updatedAt">
+  ) => void;
+  updateProject: (id: string, updates: Partial<Project>) => void;
+  deleteProject: (id: string) => void;
 
   // Client actions
   addClient: (client: Omit<Client, "id" | "createdAt" | "updatedAt">) => void;
@@ -102,6 +111,121 @@ export const useAppStore = create<AppState>()(
           role: "Designer",
           avatar: "", // Will use initials KE
           createdAt: new Date("2024-03-05"),
+        },
+      ],
+      projects: [
+        {
+          id: "1",
+          name: "TechStart Website Redesign",
+          description:
+            "Complete redesign of the TechStart Inc website with modern UI/UX",
+          clientId: "1",
+          clientName: "TechStart Inc",
+          status: "Active",
+          priority: "High",
+          startDate: new Date("2024-03-01"),
+          endDate: new Date("2024-05-15"),
+          budget: 45000,
+          progress: 65,
+          assignedTeam: ["1", "2", "3"],
+          projectManager: "1",
+          tags: ["Web Development", "UI/UX", "React"],
+          category: "Web Development",
+          milestones: [
+            {
+              id: "1",
+              title: "Design Phase Complete",
+              description: "Wireframes and mockups approved",
+              dueDate: new Date("2024-03-30"),
+              completed: true,
+              completedAt: new Date("2024-03-28"),
+              assignedTo: "3",
+            },
+            {
+              id: "2",
+              title: "Development MVP",
+              description: "Basic functionality implemented",
+              dueDate: new Date("2024-04-15"),
+              completed: true,
+              completedAt: new Date("2024-04-12"),
+              assignedTo: "2",
+            },
+            {
+              id: "3",
+              title: "Testing & Launch",
+              description: "QA testing and production deployment",
+              dueDate: new Date("2024-05-15"),
+              completed: false,
+              assignedTo: "1",
+            },
+          ],
+          documents: [],
+          createdBy: "1",
+          createdAt: new Date("2024-02-28"),
+          updatedAt: new Date("2024-04-18"),
+        },
+        {
+          id: "2",
+          name: "GrowthCorp Marketing Campaign",
+          description:
+            "Multi-platform marketing campaign for Q2 product launch",
+          clientId: "2",
+          clientName: "GrowthCorp",
+          status: "Planning",
+          priority: "Medium",
+          startDate: new Date("2024-04-01"),
+          endDate: new Date("2024-06-30"),
+          budget: 25000,
+          progress: 20,
+          assignedTeam: ["4", "5"],
+          projectManager: "4",
+          tags: ["Marketing", "Social Media", "Content"],
+          category: "Marketing Campaign",
+          milestones: [
+            {
+              id: "1",
+              title: "Strategy Development",
+              description: "Marketing strategy and content plan",
+              dueDate: new Date("2024-04-15"),
+              completed: false,
+              assignedTo: "4",
+            },
+          ],
+          documents: [],
+          createdBy: "4",
+          createdAt: new Date("2024-03-15"),
+          updatedAt: new Date("2024-04-18"),
+        },
+        {
+          id: "3",
+          name: "InnovateLab Mobile App",
+          description: "iOS and Android app development for startup client",
+          clientId: "3",
+          clientName: "InnovateLab",
+          status: "Active",
+          priority: "Critical",
+          startDate: new Date("2024-02-15"),
+          endDate: new Date("2024-07-01"),
+          budget: 75000,
+          progress: 45,
+          assignedTeam: ["2", "3", "5"],
+          projectManager: "2",
+          tags: ["Mobile App", "React Native", "API"],
+          category: "Mobile App",
+          milestones: [
+            {
+              id: "1",
+              title: "MVP Development",
+              description: "Core features and functionality",
+              dueDate: new Date("2024-05-01"),
+              completed: false,
+              assignedTo: "2",
+            },
+          ],
+          documents: [],
+          createdBy: "1",
+          createdAt: new Date("2024-02-10"),
+          updatedAt: new Date("2024-04-18"),
         },
       ],
       clients: [
@@ -520,6 +644,34 @@ export const useAppStore = create<AppState>()(
       removeUser: (id) =>
         set((state) => ({
           users: state.users.filter((user) => user.id !== id),
+        })),
+
+      // Project actions
+      addProject: (projectData) =>
+        set((state) => ({
+          projects: [
+            ...state.projects,
+            {
+              ...projectData,
+              id: generateId(),
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ],
+        })),
+
+      updateProject: (id, updates) =>
+        set((state) => ({
+          projects: state.projects.map((project) =>
+            project.id === id
+              ? { ...project, ...updates, updatedAt: new Date() }
+              : project
+          ),
+        })),
+
+      deleteProject: (id) =>
+        set((state) => ({
+          projects: state.projects.filter((project) => project.id !== id),
         })),
 
       // Client actions

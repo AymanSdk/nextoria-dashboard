@@ -23,6 +23,7 @@ import {
   Shield,
   Crown,
   User,
+  FolderOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -69,6 +70,13 @@ const baseNavigation = [
     href: "/",
     icon: Home,
     resource: "dashboard",
+    action: "read",
+  },
+  {
+    name: "Projects",
+    href: "/projects",
+    icon: FolderOpen,
+    resource: "projects",
     action: "read",
   },
   {

@@ -6,6 +6,7 @@ export const rolePermissions: RolePermissions[] = [
     role: "Admin",
     permissions: [
       { resource: "users", actions: ["create", "read", "update", "delete"] },
+      { resource: "projects", actions: ["create", "read", "update", "delete"] },
       { resource: "clients", actions: ["create", "read", "update", "delete"] },
       {
         resource: "campaigns",
@@ -22,6 +23,7 @@ export const rolePermissions: RolePermissions[] = [
   {
     role: "Marketer",
     permissions: [
+      { resource: "projects", actions: ["create", "read", "update"] },
       { resource: "clients", actions: ["create", "read", "update"] },
       {
         resource: "campaigns",
@@ -36,6 +38,7 @@ export const rolePermissions: RolePermissions[] = [
   {
     role: "Designer",
     permissions: [
+      { resource: "projects", actions: ["read", "update"] },
       { resource: "clients", actions: ["read"] },
       { resource: "content", actions: ["create", "read", "update", "delete"] },
       { resource: "tasks", actions: ["read", "update"] },
@@ -45,6 +48,7 @@ export const rolePermissions: RolePermissions[] = [
   {
     role: "Developer",
     permissions: [
+      { resource: "projects", actions: ["read", "update"] },
       { resource: "clients", actions: ["read"] },
       { resource: "campaigns", actions: ["read"] },
       { resource: "tasks", actions: ["read", "update"] },
@@ -185,6 +189,15 @@ export function filterDataByRole<T>(
 
   // For other roles, filter based on business logic
   switch (resource) {
+    case "projects":
+      // All roles can see projects they're involved in
+      return data.filter(
+        (item: any) =>
+          item.projectManager === userName ||
+          item.assignedTeam.includes(userName) ||
+          item.createdBy === userName
+      );
+
     case "clients":
       // Marketers see all clients, Designers/Developers see only assigned ones
       if (userRole === "Marketer") return data;
